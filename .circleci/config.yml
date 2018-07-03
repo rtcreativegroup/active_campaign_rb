@@ -4,6 +4,8 @@ defaults: &defaults
 
 test_steps: &test_steps
   - checkout
+  - attach_workspace:
+      at: ~/active_campaign/tmp
 
   # Restore Cached Dependencies
   - restore-cache:
@@ -24,7 +26,7 @@ test_steps: &test_steps
   - run:
       name: Run tests
       command: |
-        mkdir /tmp/test-results
+        mkdir ./tmp/test-results
         TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
 
         bundle exec rspec --format progress \
@@ -32,6 +34,12 @@ test_steps: &test_steps
                         --out /tmp/test-results/rspec.xml \
                         --format progress \
                         $TEST_FILES
+        ./tmp/cc-test-reporter format-coverage -t simplecov -o "tmp/codeclimate.$CIRCLE_JOB.json" "coverage/$CIRCLE_JOB/.resultset.json"
+
+  - persist_to_workspace:
+      root: tmp
+      paths:
+        - codeclimate.*.json
 
   # collect reports
   - store_test_results:
@@ -41,6 +49,22 @@ test_steps: &test_steps
       destination: test-results
 
 jobs:
+  download_code_climate_reporter:
+    <<: *defaults
+    docker:
+      - image: circleci/ruby:2.5
+    steps:
+      - run:
+          name:  Download cc-test-reporter
+          command: |
+            mkdir -p tmp/
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - cc-test-reporter
+
   build-ruby-2.3:
     <<: *defaults
     docker:
@@ -60,10 +84,37 @@ jobs:
       - image: circleci/ruby:2.5
     steps: *test_steps
 
+  upload-coverage-to-code-climate:
+    <<: *defaults
+    docker:
+      - image: circleci/ruby:2.5
+    environment:
+      - CC_TEST_REPORTER_ID: ac84a9a9e9287546ed70ff62afe042cb0f286b6222cd8f29328ce6a7e3d2a87e
+    steps:
+      - attach_workspace:
+          at: ~/active_campaign/tmp
+      - run:
+          name: Upload coverage results to Code Climate
+          command: |
+            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 3 -o tmp/codeclimate.total.json
+            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
+
 workflows:
   version: 2
   tests:
     jobs:
-      - build-ruby-2.3
-      - build-ruby-2.4
-      - build-ruby-2.5
+      - download_code_climate_reporter
+      - build-ruby-2.3:
+          requires:
+            - download_code_climate_reporter
+      - build-ruby-2.4:
+          requires:
+            - download_code_climate_reporter
+      - build-ruby-2.5:
+          requires:
+            - download_code_climate_reporter
+      - upload-coverage-to-code-climate:
+          requires:
+            - build-ruby-2.3
+            - build-ruby-2.4
+            - build-ruby-2.5

@@ -1,4 +1,4 @@
-if ENV['ENABLE_CODE_COVERAGE'] == 1
+if ENV['ENABLE_CODE_COVERAGE']
   require 'simplecov'
   SimpleCov.start
 end
