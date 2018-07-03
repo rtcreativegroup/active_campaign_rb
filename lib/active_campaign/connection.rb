@@ -36,7 +36,7 @@ module ActiveCampaign
       uri = URI(base_url + endpoint)
       params_with_defaults = args.fetch(:params, {}).merge(default_params)
 
-      response = HTTP.send(action, uri, args.merge(params: params_with_defaults))
+      response = HTTP.request(action, uri, args.merge(params: params_with_defaults))
 
       parse_response(response)
     end
