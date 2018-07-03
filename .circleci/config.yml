@@ -10,7 +10,7 @@ jobs:
       # Restore Cached Dependencies
       - restore-cache:
           keys:
-          - active_campaign_rb-ruby-2_3-{{ checksum "Gemfile.lock" }}
+          - active_campaign_rb-ruby-2_3-{{ checksum "active_campaign.gemspec" }}
           # fallback to using the latest cache if no exact match is found
           - active_campaign_rb-ruby-2_3-
 
@@ -21,7 +21,7 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: active_campaign_rb-ruby-2_5-{{ checksum "Gemfile.lock" }}
+          key: active_campaign_rb-ruby-2_5-{{ checksum "active_campaign.gemspec" }}
 
       - run:
           name: Run tests
@@ -52,7 +52,7 @@ jobs:
       # Download and cache dependencies
       - restore-cache:
           keys:
-          - active_campaign_rb-ruby-2_4-{{ checksum "Gemfile.lock" }}
+          - active_campaign_rb-ruby-2_4-{{ checksum "active_campaign.gemspec" }}
           # fallback to using the latest cache if no exact match is found
           - active_campaign_rb-ruby-2_4-
 
@@ -64,7 +64,7 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: active_campaign_rb-ruby-2_4-{{ checksum "Gemfile.lock" }}
+          key: active_campaign_rb-ruby-2_4-{{ checksum "active_campaign.gemspec" }}
 
       - run:
           name: Run tests
@@ -95,7 +95,7 @@ jobs:
       # Restore Cached Dependencies
       - restore-cache:
           keys:
-          - active_campaign_rb-ruby-2_5-{{ checksum "Gemfile.lock" }}
+          - active_campaign_rb-ruby-2_5-{{ checksum "active_campaign.gemspec" }}
           # fallback to using the latest cache if no exact match is found
           - active_campaign_rb-ruby-2_5-
 
@@ -106,7 +106,7 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: active_campaign_rb-ruby-2_5-{{ checksum "Gemfile.lock" }}
+          key: active_campaign_rb-ruby-2_5-{{ checksum "active_campaign.gemspec" }}
 
       - run:
           name: Run tests
