@@ -1,6 +1,8 @@
 # ActiveCampaign
 
 [![CircleCI](https://circleci.com/gh/brentdodell/active_campaign_rb/tree/master.svg?style=shield)](https://circleci.com/gh/brentdodell/active_campaign_rb/tree/master)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/cb849090516b1a808547/test_coverage)](https://codeclimate.com/github/brentdodell/active_campaign_rb/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/cb849090516b1a808547/maintainability)](https://codeclimate.com/github/brentdodell/active_campaign_rb/maintainability)
 
 A Ruby wrapper for the ActiveCampaign API
 
