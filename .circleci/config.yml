@@ -1,131 +1,64 @@
 version: 2
+defaults: &defaults
+  working_directory: ~/active_campaign
+
+test_steps: &test_steps
+  - checkout
+
+  # Restore Cached Dependencies
+  - restore-cache:
+      keys:
+      - active_campaign_rb-{{ .Environment.CIRCLE_JOB }}-{{ checksum "active_campaign.gemspec" }}
+      # fallback to using the latest cache if no exact match is found
+      - active_campaign_rb-ruby-{{ .Environment.CIRCLE_JOB }}-
+
+  # Bundle install dependencies
+  - run: bundle install --path vendor/bundle
+
+  # Cache Dependencies
+  - save_cache:
+      paths:
+        - ./vendor/bundle
+      key: active_campaign_rb-{{ .Environment.CIRCLE_JOB }}-{{ checksum "active_campaign.gemspec" }}
+
+  - run:
+      name: Run tests
+      command: |
+        mkdir /tmp/test-results
+        TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+
+        bundle exec rspec --format progress \
+                        --format RspecJunitFormatter \
+                        --out /tmp/test-results/rspec.xml \
+                        --format progress \
+                        $TEST_FILES
+
+  # collect reports
+  - store_test_results:
+      path: /tmp/test-results
+  - store_artifacts:
+      path: /tmp/test-results
+      destination: test-results
+
 jobs:
   build-ruby-2.3:
-    working_directory: ~/active_campaign/ruby-2.3
+    <<: *defaults
     docker:
       - image: circleci/ruby:2.3
-    steps:
-      - checkout
+    steps: *test_steps
 
-      # Restore Cached Dependencies
-      - restore-cache:
-          keys:
-          - active_campaign_rb-ruby-2_3-{{ checksum "active_campaign.gemspec" }}
-          # fallback to using the latest cache if no exact match is found
-          - active_campaign_rb-ruby-2_3-
-
-      # Bundle install dependencies
-      - run: bundle install --path vendor/bundle
-
-      # Cache Dependencies
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: active_campaign_rb-ruby-2_5-{{ checksum "active_campaign.gemspec" }}
-
-      - run:
-          name: Run tests
-          command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-
-            bundle exec rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/rspec.xml \
-                            --format progress \
-                            $TEST_FILES
-
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
 
   build-ruby-2.4:
-    working_directory: ~/active_campaign/ruby-2.4
+    <<: *defaults
     docker:
       - image: circleci/ruby:2.4
-    steps:
-      - checkout
-
-      # Download and cache dependencies
-      - restore-cache:
-          keys:
-          - active_campaign_rb-ruby-2_4-{{ checksum "active_campaign.gemspec" }}
-          # fallback to using the latest cache if no exact match is found
-          - active_campaign_rb-ruby-2_4-
-
-      - run:
-          name: Install dependencies
-          command: bundle install --jobs=4 --retry=3 --path vendor/bundle
-
-      # Cache Dependencies
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: active_campaign_rb-ruby-2_4-{{ checksum "active_campaign.gemspec" }}
-
-      - run:
-          name: Run tests
-          command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-
-            bundle exec rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/rspec.xml \
-                            --format progress \
-                            $TEST_FILES
-
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
+    steps: *test_steps
 
   build-ruby-2.5:
-    working_directory: ~/active_campaign/ruby-2.5
+    <<: *defaults
     docker:
       - image: circleci/ruby:2.5
-    steps:
-      - checkout
-
-      # Restore Cached Dependencies
-      - restore-cache:
-          keys:
-          - active_campaign_rb-ruby-2_5-{{ checksum "active_campaign.gemspec" }}
-          # fallback to using the latest cache if no exact match is found
-          - active_campaign_rb-ruby-2_5-
-
-      # Bundle install dependencies
-      - run: bundle install --path vendor/bundle
-
-      # Cache Dependencies
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: active_campaign_rb-ruby-2_5-{{ checksum "active_campaign.gemspec" }}
-
-      - run:
-          name: Run tests
-          command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-
-            bundle exec rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/rspec.xml \
-                            --format progress \
-                            $TEST_FILES
-
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
+    steps: *test_steps
 
 workflows:
   version: 2
