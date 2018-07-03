@@ -8,21 +8,39 @@ jobs:
       - checkout
 
       # Restore Cached Dependencies
-      - type: cache-restore
-        name: Restore bundle cache
-        key: active_campaign_rb-ruby-2_3-{{ checksum "Gemfile.lock" }}
+      - restore-cache:
+          keys:
+          - active_campaign_rb-ruby-2_3-{{ checksum "Gemfile.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - active_campaign_rb-ruby-2_3-
 
       # Bundle install dependencies
       - run: bundle install --path vendor/bundle
 
       # Cache Dependencies
-      - type: cache-save
-        name: Store bundle cache
-        key: active_campaign_rb-ruby-2_3-{{ checksum "Gemfile.lock" }}
-        paths:
-          - vendor/bundle
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: active_campaign_rb-ruby-2_5-{{ checksum "Gemfile.lock" }}
 
-      - run: bundle exec rake
+      - run:
+          name: Run tests
+          command: |
+            mkdir /tmp/test-results
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+
+            bundle exec rspec --format progress \
+                            --format RspecJunitFormatter \
+                            --out /tmp/test-results/rspec.xml \
+                            --format progress \
+                            $TEST_FILES
+
+      # collect reports
+      - store_test_results:
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
 
   build-ruby-2.4:
     working_directory: ~/active_campaign/ruby-2.4
@@ -31,22 +49,41 @@ jobs:
     steps:
       - checkout
 
-      # Restore Cached Dependencies
-      - type: cache-restore
-        name: Restore bundle cache
-        key: active_campaign_rb-ruby-2_4-{{ checksum "Gemfile.lock" }}
+      # Download and cache dependencies
+      - restore-cache:
+          keys:
+          - active_campaign_rb-ruby-2_4-{{ checksum "Gemfile.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - active_campaign_rb-ruby-2_4-
 
-      # Bundle install dependencies
-      - run: bundle install --path vendor/bundle
+      - run:
+          name: Install dependencies
+          command: bundle install --jobs=4 --retry=3 --path vendor/bundle
 
       # Cache Dependencies
-      - type: cache-save
-        name: Store bundle cache
-        key: active_campaign_rb-ruby-2_4-{{ checksum "Gemfile.lock" }}
-        paths:
-          - vendor/bundle
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: active_campaign_rb-ruby-2_4-{{ checksum "Gemfile.lock" }}
 
-      - run: bundle exec rake
+      - run:
+          name: Run tests
+          command: |
+            mkdir /tmp/test-results
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+
+            bundle exec rspec --format progress \
+                            --format RspecJunitFormatter \
+                            --out /tmp/test-results/rspec.xml \
+                            --format progress \
+                            $TEST_FILES
+
+      # collect reports
+      - store_test_results:
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
 
   build-ruby-2.5:
     working_directory: ~/active_campaign/ruby-2.5
@@ -56,18 +93,44 @@ jobs:
       - checkout
 
       # Restore Cached Dependencies
-      - type: cache-restore
-        name: Restore bundle cache
-        key: active_campaign_rb-ruby-2_5-{{ checksum "Gemfile.lock" }}
+      - restore-cache:
+          keys:
+          - active_campaign_rb-ruby-2_5-{{ checksum "Gemfile.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - active_campaign_rb-ruby-2_5-
 
       # Bundle install dependencies
       - run: bundle install --path vendor/bundle
 
       # Cache Dependencies
-      - type: cache-save
-        name: Store bundle cache
-        key: active_campaign_rb-ruby-2_5-{{ checksum "Gemfile.lock" }}
-        paths:
-          - vendor/bundle
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: active_campaign_rb-ruby-2_5-{{ checksum "Gemfile.lock" }}
 
-      - run: bundle exec rake
+      - run:
+          name: Run tests
+          command: |
+            mkdir /tmp/test-results
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+
+            bundle exec rspec --format progress \
+                            --format RspecJunitFormatter \
+                            --out /tmp/test-results/rspec.xml \
+                            --format progress \
+                            $TEST_FILES
+
+      # collect reports
+      - store_test_results:
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
+
+workflows:
+  version: 2
+  tests:
+    jobs:
+      - build-ruby-2.3
+      - build-ruby-2.4
+      - build-ruby-2.5
