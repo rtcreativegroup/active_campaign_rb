@@ -1,3 +1,8 @@
+if ENV['ENABLE_CODE_COVERAGE']
+  require 'simplecov'
+  SimpleCov.start
+end
+
 require 'bundler/setup'
 require 'active_campaign'
 require 'webmock/rspec'

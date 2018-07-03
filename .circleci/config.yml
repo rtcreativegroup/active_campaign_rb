@@ -1,136 +1,120 @@
 version: 2
+defaults: &defaults
+  working_directory: ~/active_campaign
+
+test_steps: &test_steps
+  - checkout
+  - attach_workspace:
+      at: ~/active_campaign/tmp
+
+  # Restore Cached Dependencies
+  - restore-cache:
+      keys:
+      - active_campaign_rb-{{ .Environment.CIRCLE_JOB }}-{{ checksum "active_campaign.gemspec" }}
+      # fallback to using the latest cache if no exact match is found
+      - active_campaign_rb-ruby-{{ .Environment.CIRCLE_JOB }}-
+
+  # Bundle install dependencies
+  - run: bundle install --path vendor/bundle
+
+  # Cache Dependencies
+  - save_cache:
+      paths:
+        - ./vendor/bundle
+      key: active_campaign_rb-{{ .Environment.CIRCLE_JOB }}-{{ checksum "active_campaign.gemspec" }}
+
+  - run:
+      name: Run tests
+      command: |
+        mkdir ./tmp/test-results
+        TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+
+        bundle exec rspec --format progress \
+                        --format RspecJunitFormatter \
+                        --out /tmp/test-results/rspec.xml \
+                        --format progress \
+                        $TEST_FILES
+        ./tmp/cc-test-reporter format-coverage -t simplecov -o "tmp/codeclimate.$CIRCLE_JOB.json" "coverage/$CIRCLE_JOB/.resultset.json"
+
+  - persist_to_workspace:
+      root: tmp
+      paths:
+        - codeclimate.*.json
+
+  # collect reports
+  - store_test_results:
+      path: /tmp/test-results
+  - store_artifacts:
+      path: /tmp/test-results
+      destination: test-results
+
 jobs:
-  build-ruby-2.3:
-    working_directory: ~/active_campaign/ruby-2.3
-    docker:
-      - image: circleci/ruby:2.3
-    steps:
-      - checkout
-
-      # Restore Cached Dependencies
-      - restore-cache:
-          keys:
-          - active_campaign_rb-ruby-2_3-{{ checksum "active_campaign.gemspec" }}
-          # fallback to using the latest cache if no exact match is found
-          - active_campaign_rb-ruby-2_3-
-
-      # Bundle install dependencies
-      - run: bundle install --path vendor/bundle
-
-      # Cache Dependencies
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: active_campaign_rb-ruby-2_5-{{ checksum "active_campaign.gemspec" }}
-
-      - run:
-          name: Run tests
-          command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-
-            bundle exec rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/rspec.xml \
-                            --format progress \
-                            $TEST_FILES
-
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
-
-  build-ruby-2.4:
-    working_directory: ~/active_campaign/ruby-2.4
-    docker:
-      - image: circleci/ruby:2.4
-    steps:
-      - checkout
-
-      # Download and cache dependencies
-      - restore-cache:
-          keys:
-          - active_campaign_rb-ruby-2_4-{{ checksum "active_campaign.gemspec" }}
-          # fallback to using the latest cache if no exact match is found
-          - active_campaign_rb-ruby-2_4-
-
-      - run:
-          name: Install dependencies
-          command: bundle install --jobs=4 --retry=3 --path vendor/bundle
-
-      # Cache Dependencies
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: active_campaign_rb-ruby-2_4-{{ checksum "active_campaign.gemspec" }}
-
-      - run:
-          name: Run tests
-          command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-
-            bundle exec rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/rspec.xml \
-                            --format progress \
-                            $TEST_FILES
-
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
-
-  build-ruby-2.5:
-    working_directory: ~/active_campaign/ruby-2.5
+  download_code_climate_reporter:
+    <<: *defaults
     docker:
       - image: circleci/ruby:2.5
     steps:
-      - checkout
-
-      # Restore Cached Dependencies
-      - restore-cache:
-          keys:
-          - active_campaign_rb-ruby-2_5-{{ checksum "active_campaign.gemspec" }}
-          # fallback to using the latest cache if no exact match is found
-          - active_campaign_rb-ruby-2_5-
-
-      # Bundle install dependencies
-      - run: bundle install --path vendor/bundle
-
-      # Cache Dependencies
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: active_campaign_rb-ruby-2_5-{{ checksum "active_campaign.gemspec" }}
-
       - run:
-          name: Run tests
+          name:  Download cc-test-reporter
           command: |
-            mkdir /tmp/test-results
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+            mkdir -p tmp/
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - cc-test-reporter
 
-            bundle exec rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/rspec.xml \
-                            --format progress \
-                            $TEST_FILES
+  build-ruby-2.3:
+    <<: *defaults
+    docker:
+      - image: circleci/ruby:2.3
+    steps: *test_steps
 
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
+
+  build-ruby-2.4:
+    <<: *defaults
+    docker:
+      - image: circleci/ruby:2.4
+    steps: *test_steps
+
+  build-ruby-2.5:
+    <<: *defaults
+    docker:
+      - image: circleci/ruby:2.5
+    steps: *test_steps
+
+  upload-coverage-to-code-climate:
+    <<: *defaults
+    docker:
+      - image: circleci/ruby:2.5
+    environment:
+      - CC_TEST_REPORTER_ID: ac84a9a9e9287546ed70ff62afe042cb0f286b6222cd8f29328ce6a7e3d2a87e
+    steps:
+      - attach_workspace:
+          at: ~/active_campaign/tmp
+      - run:
+          name: Upload coverage results to Code Climate
+          command: |
+            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 3 -o tmp/codeclimate.total.json
+            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
 
 workflows:
   version: 2
   tests:
     jobs:
-      - build-ruby-2.3
-      - build-ruby-2.4
-      - build-ruby-2.5
+      - download_code_climate_reporter
+      - build-ruby-2.3:
+          requires:
+            - download_code_climate_reporter
+      - build-ruby-2.4:
+          requires:
+            - download_code_climate_reporter
+      - build-ruby-2.5:
+          requires:
+            - download_code_climate_reporter
+      - upload-coverage-to-code-climate:
+          requires:
+            - build-ruby-2.3
+            - build-ruby-2.4
+            - build-ruby-2.5
