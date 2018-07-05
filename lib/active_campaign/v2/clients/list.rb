@@ -2,7 +2,7 @@ module ActiveCampaign
   module V2
     module Clients
       class List < ActiveCampaign::V2::Client
-        def add(
+        def list_add(
           name:,
           sender_name:,
           sender_addr1:,
@@ -32,17 +32,17 @@ module ActiveCampaign
           )
         end
 
-        def delete(id:)
+        def list_delete(id:)
           get('/', params: { api_action: 'list_delete', id: id })
         end
 
-        def delete_list(ids:)
+        def list_delete_list(ids:)
           get('/', params: { api_action: 'list_delete_list', ids: ids.join(',') })
         end
 
         # The list of required params online is not correct. It does not show that sender info is
         # required, but it is
-        def edit(
+        def list_edit(
             id:,
             name:,
             sender_addr1:,
@@ -84,7 +84,7 @@ module ActiveCampaign
           )
         end
 
-        def field_add(
+        def list_field_add(
           title:,
           type:,
           req:,
@@ -108,11 +108,11 @@ module ActiveCampaign
           )
         end
 
-        def field_delete(id:)
+        def list_field_delete(id:)
           get('/', params: { api_action: 'list_field_delete', id: id })
         end
 
-        def field_edit(
+        def list_field_edit(
           id:,
           title:,
           type:,
@@ -138,16 +138,16 @@ module ActiveCampaign
           )
         end
 
-        def field_view(ids: 'all')
+        def list_field_view(ids: 'all')
           #Doesn't seem to work
           get('/', params: { api_action: 'list_field_view', ids: Array(ids).join(',') })
         end
 
-        def list(ids: 'all')
+        def list_list(ids: 'all')
           get('/', params: { api_action: 'list_list', ids: Array(ids).join(',') })
         end
 
-        def paginator(
+        def list_paginator(
           sort:,
           offset:,
           limit:,
@@ -168,7 +168,7 @@ module ActiveCampaign
           )
         end
 
-        def view(id:)
+        def list_view(id:)
           get('/', params: { api_action: 'list_view', id: id })
         end
       end
