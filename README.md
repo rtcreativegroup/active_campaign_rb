@@ -11,7 +11,7 @@ A Ruby wrapper for the ActiveCampaign API
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'active_campaign'
+gem 'active_campaign_rb'
 ```
 
 And then execute:
@@ -20,7 +20,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install active_campaign
+    $ gem install active_campaign_rb
 
 ## Usage
 
