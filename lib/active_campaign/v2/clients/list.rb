@@ -1,7 +1,7 @@
 module ActiveCampaign
   module V2
     module Clients
-      class List < ActiveCampaign::V2::Client
+      module List
         def list_add(
           name:,
           sender_name:,
