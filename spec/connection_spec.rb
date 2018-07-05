@@ -63,6 +63,10 @@ RSpec.describe ActiveCampaign::Connection do
   end
 
   context 'HTTP verbs' do
+    before(:each) do
+      allow(ActiveCampaign::V2::Adapter).to receive(:call).with(base_url).and_return(base_url)
+    end
+
     shared_examples_for 'request method' do |method|
       it "calls #{method.to_s.upcase} on the supplied uri appended to the base_uri" do
         shared_stub_request(
