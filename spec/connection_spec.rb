@@ -4,34 +4,40 @@ RSpec.describe ActiveCampaign::Connection do
   describe '#initialize' do
     subject(:connection) do
       described_class.new(
-        base_url: 'http://www.example.com',
+        base_url: base_url,
         key: 'abc123',
         adapter: adapter
       )
     end
-    let(:adapter) { nil }
-    let(:versioned_base_url) { 'http://www.example.com' }
+    let(:base_url) { 'http://www.example.com' }
+    let(:adapter) { v2_adapter }
+    let(:v2_adapter) { ActiveCampaign::V2::Adapter }
+    let(:v3_adapter) { ActiveCampaign::V3::Adapter }
 
     shared_examples 'takes a base_url and an optional adapter' do
-      it 'calls adapter with base_url and sets return value to attr' do
-        expect(connection.base_url.to_s).to eq(versioned_base_url)
+      it 'calls adapter with the base_url' do
+        expect(adapter).to receive(:call).with(base_url)
+        subject
       end
     end
 
-    context 'default adapter' do
-      it_behaves_like 'takes a base_url and an optional adapter'
+    context 'nil adapter' do
+      let(:adapter) { nil }
+
+      it 'calls the default adapter with the base_url' do
+        expect(ActiveCampaign::V2::Adapter).to receive(:call).with(base_url)
+        subject
+      end
     end
 
     context 'v2 api adapter' do
-      let(:adapter) { ActiveCampaign::V2::Adapter }
-      let(:versioned_base_url) { 'http://www.example.com' }
+      let(:adapter) { v2_adapter }
 
       it_behaves_like 'takes a base_url and an optional adapter'
     end
 
     context 'v3 api adapter' do
-      let(:adapter) { ActiveCampaign::V3::Adapter }
-      let(:versioned_base_url) { 'http://www.example.com/api/3' }
+      let(:adapter) { v3_adapter }
 
       it_behaves_like 'takes a base_url and an optional adapter'
     end
@@ -45,8 +51,9 @@ RSpec.describe ActiveCampaign::Connection do
       ENV['ACTIVE_CAMPAIGN_KEY'] = 'my-environmental-key'
       subject(:connection) { described_class.new }
 
-      it "defaults base_url to ENV['ACTIVE_CAMPAIGN_URL']" do
-        expect(connection.base_url).to eq('http://environmental.com')
+      it "calls the adapter with ENV['ACTIVE_CAMPAIGN_URL']" do
+        expect(ActiveCampaign::V2::Adapter).to receive(:call).with('http://environmental.com')
+        subject
       end
 
       it "defaults key to ENV['ACTIVE_CAMPAIGN_KEY']" do
