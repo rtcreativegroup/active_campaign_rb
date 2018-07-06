@@ -34,11 +34,15 @@ module ActiveCampaign
 
     def request(action, endpoint:, args: {})
       uri = URI(base_url + endpoint)
-      params_with_defaults = args.fetch(:params, {}).merge(default_params)
+      params_with_defaults = default_params.merge(args.fetch(:params, {}))
 
       response = HTTP.request(action, uri, args.merge(params: params_with_defaults))
 
-      parse_response(response)
+      if params_with_defaults[:api_output] == :json
+        parse_response(response)
+      else
+        response.body.to_s
+      end
     end
 
     def default_params
