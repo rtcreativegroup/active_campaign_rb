@@ -9,11 +9,15 @@ module ActiveCampaign
     def initialize(
       base_url: ENV['ACTIVE_CAMPAIGN_URL'],
       key: ENV['ACTIVE_CAMPAIGN_KEY'],
+      tracking_account_id: ENV['ACTIVE_CAMPAIGN_TRACKING_ACCOUNT_ID'],
+      event_key: ENV['ACTIVE_CAMPAIGN_EVENT_KEY'],
       adapter: nil
     )
       @adapter ||= adapter.new(
         base_url: base_url,
-        key: key
+        key: key,
+        tracking_account_id: tracking_account_id,
+        event_key: event_key
       )
     end
 

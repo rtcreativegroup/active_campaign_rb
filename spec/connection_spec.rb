@@ -5,11 +5,15 @@ RSpec.describe ActiveCampaign::Connection do
     described_class.new(
       base_url: base_url,
       key: key,
+      tracking_account_id: tracking_account_id,
+      event_key: event_key,
       adapter: adapter
     )
   end
   let(:base_url) { 'http://www.example.com' }
   let(:key) { 'abc123' }
+  let(:tracking_account_id) { '12345' }
+  let(:event_key) { 'My-Event-Key' }
   let(:adapter) { v2_adapter }
   let(:v2_adapter) { ActiveCampaign::V2::Adapter }
   let(:adapter_double) do
@@ -25,37 +29,35 @@ RSpec.describe ActiveCampaign::Connection do
   let(:v3_adapter) { ActiveCampaign::V3::Adapter }
 
   describe '#initialize' do
-    shared_examples 'takes a base_url, key, and adapter' do
-      it 'calls adapter with the base_url' do
-        expect(adapter).to receive(:new).with(base_url: base_url, key: key)
-        subject
+    context 'all parameters provided' do
+      it 'instantiates the adapter with provided parameters' do
+        expect(adapter).to receive(:new)
+                             .with(
+                               base_url: base_url,
+                               key: key,
+                               tracking_account_id: '12345',
+                               event_key: 'My-Event-Key'
+                             )
+        connection
       end
-    end
-
-    context 'v2 api adapter' do
-      let(:adapter) { v2_adapter }
-
-      it_behaves_like 'takes a base_url, key, and adapter'
-    end
-
-    context 'v3 api adapter' do
-      let(:adapter) { v3_adapter }
-
-      it_behaves_like 'takes a base_url, key, and adapter'
     end
 
     context 'defaults from environment variables' do
       ENV['ACTIVE_CAMPAIGN_URL'] = 'http://environmental.com'
       ENV['ACTIVE_CAMPAIGN_KEY'] = 'my-environmental-key'
+      ENV['ACTIVE_CAMPAIGN_TRACKING_ACCOUNT_ID'] = '67890'
+      ENV['ACTIVE_CAMPAIGN_EVENT_KEY'] = 'my-environmental-event-key'
       subject(:connection) { described_class.new(adapter: v2_adapter) }
 
-      it "calls the adapter with ENV['ACTIVE_CAMPAIGN_URL']" do
+      it "instantiates the adapter with environmental variables" do
         expect(ActiveCampaign::V2::Adapter).to receive(:new)
                                                  .with(
                                                    base_url: 'http://environmental.com',
-                                                   key: 'my-environmental-key'
+                                                   key: 'my-environmental-key',
+                                                   tracking_account_id: '67890',
+                                                   event_key: 'my-environmental-event-key'
                                                  )
-        subject
+        connection
       end
     end
   end
@@ -63,7 +65,12 @@ RSpec.describe ActiveCampaign::Connection do
   context 'HTTP verbs' do
     before(:each) do
       allow(ActiveCampaign::V2::Adapter).to receive(:new)
-                                              .with(base_url: base_url, key: key)
+                                              .with(
+                                                base_url: base_url,
+                                                key: key,
+                                                tracking_account_id: '12345',
+                                                event_key: 'My-Event-Key'
+                                              )
                                               .and_return(adapter_double)
     end
 
