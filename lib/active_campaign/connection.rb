@@ -2,16 +2,19 @@ require "http"
 
 module ActiveCampaign
   class Connection
-    attr_reader :base_url, :key
+    extend Forwardable
+
+    def_delegators :adapter, :base_url, :default_params
 
     def initialize(
       base_url: ENV['ACTIVE_CAMPAIGN_URL'],
       key: ENV['ACTIVE_CAMPAIGN_KEY'],
       adapter: nil
     )
-      adapter ||= ActiveCampaign::V2::Adapter
-      @base_url = adapter.(base_url)
-      @key = key
+      @adapter ||= adapter.new(
+        base_url: base_url,
+        key: key
+      )
     end
 
     def get(endpoint, args={})
@@ -32,6 +35,8 @@ module ActiveCampaign
 
     private
 
+    attr_reader :adapter
+
     def request(action, endpoint:, args: {})
       uri = URI(base_url + endpoint)
       params_with_defaults = default_params.merge(args.fetch(:params, {}))
@@ -43,13 +48,6 @@ module ActiveCampaign
       else
         response.body.to_s
       end
-    end
-
-    def default_params
-      {
-        api_key: key,
-        api_output: :json
-      }
     end
 
     def parse_response(response)

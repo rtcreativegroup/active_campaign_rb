@@ -4,28 +4,30 @@ RSpec.describe ActiveCampaign::Connection do
   subject(:connection) do
     described_class.new(
       base_url: base_url,
-      key: 'abc123',
+      key: key,
       adapter: adapter
     )
   end
   let(:base_url) { 'http://www.example.com' }
+  let(:key) { 'abc123' }
   let(:adapter) { v2_adapter }
   let(:v2_adapter) { ActiveCampaign::V2::Adapter }
+  let(:adapter_double) do
+    double(
+      'ActiveCampaign::V2::Adapter',
+      base_url: 'http://www.example.com',
+      default_params: {
+        api_key: key,
+        api_output: :json
+      }
+    )
+  end
   let(:v3_adapter) { ActiveCampaign::V3::Adapter }
 
   describe '#initialize' do
-    shared_examples 'takes a base_url and an optional adapter' do
+    shared_examples 'takes a base_url, key, and adapter' do
       it 'calls adapter with the base_url' do
-        expect(adapter).to receive(:call).with(base_url)
-        subject
-      end
-    end
-
-    context 'nil adapter' do
-      let(:adapter) { nil }
-
-      it 'calls the default adapter with the base_url' do
-        expect(ActiveCampaign::V2::Adapter).to receive(:call).with(base_url)
+        expect(adapter).to receive(:new).with(base_url: base_url, key: key)
         subject
       end
     end
@@ -33,38 +35,36 @@ RSpec.describe ActiveCampaign::Connection do
     context 'v2 api adapter' do
       let(:adapter) { v2_adapter }
 
-      it_behaves_like 'takes a base_url and an optional adapter'
+      it_behaves_like 'takes a base_url, key, and adapter'
     end
 
     context 'v3 api adapter' do
       let(:adapter) { v3_adapter }
 
-      it_behaves_like 'takes a base_url and an optional adapter'
-    end
-
-    it 'takes a key and sets it to attr' do
-      expect(connection.key).to eq('abc123')
+      it_behaves_like 'takes a base_url, key, and adapter'
     end
 
     context 'defaults from environment variables' do
       ENV['ACTIVE_CAMPAIGN_URL'] = 'http://environmental.com'
       ENV['ACTIVE_CAMPAIGN_KEY'] = 'my-environmental-key'
-      subject(:connection) { described_class.new }
+      subject(:connection) { described_class.new(adapter: v2_adapter) }
 
       it "calls the adapter with ENV['ACTIVE_CAMPAIGN_URL']" do
-        expect(ActiveCampaign::V2::Adapter).to receive(:call).with('http://environmental.com')
+        expect(ActiveCampaign::V2::Adapter).to receive(:new)
+                                                 .with(
+                                                   base_url: 'http://environmental.com',
+                                                   key: 'my-environmental-key'
+                                                 )
         subject
-      end
-
-      it "defaults key to ENV['ACTIVE_CAMPAIGN_KEY']" do
-        expect(connection.key).to eq('my-environmental-key')
       end
     end
   end
 
   context 'HTTP verbs' do
     before(:each) do
-      allow(ActiveCampaign::V2::Adapter).to receive(:call).with(base_url).and_return(base_url)
+      allow(ActiveCampaign::V2::Adapter).to receive(:new)
+                                              .with(base_url: base_url, key: key)
+                                              .and_return(adapter_double)
     end
 
     shared_examples_for 'request method' do |method|
