@@ -6,6 +6,7 @@ require 'active_campaign/v2/adapters/event_management_adapter'
 require 'active_campaign/v2/adapters/site_tracking_adapter'
 require 'active_campaign/v2/adapters/site_tracking_code_adapter'
 require 'active_campaign/v3/adapter'
+require 'active_campaign/v3/client'
 
 module ActiveCampaign
 end
