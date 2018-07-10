@@ -3,7 +3,7 @@ module ActiveCampaign
     module Clients
       module Tracking
         def track_event_delete(event:)
-          delete(:event_management, form: { event: event })
+          delete(:event_management, body: { event: event })
         end
 
         def track_event_list
@@ -11,7 +11,7 @@ module ActiveCampaign
         end
 
         def track_event_status_edit(status:)
-          post(:event_management, form: { status: status })
+          post(:event_management, body: { status: status })
         end
 
         def track_site_code
@@ -23,22 +23,22 @@ module ActiveCampaign
         end
 
         def track_site_status_edit(status:)
-          post(:site_tracking, form: { status: status })
+          post(:site_tracking, body: { status: status })
         end
 
         def track_site_whitelist_add(domain:)
-          put(:site_tracking, form: { domain: domain })
+          put(:site_tracking, body: { domain: domain })
         end
 
         def track_site_whitelist_delete(domain:)
-          delete(:site_tracking, form: { domain: domain })
+          delete(:site_tracking, body: { domain: domain })
         end
 
         def track_event_add(event:, **args)
           post(
             :event_adding,
-            params: { api_action: 'track_event_add' },
-            form: args.merge(event: event)
+            query: { api_action: 'track_event_add' },
+            body: args.merge(event: event)
           )
         end
       end

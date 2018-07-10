@@ -16,10 +16,10 @@ module ActiveCampaign
 
           post(
             :admin,
-            params: {
+            query: {
               api_action: 'list_add'
             },
-            form: args.merge(
+            body: args.merge(
               name: name,
               sender_name: sender_name,
               sender_addr1: sender_addr1,
@@ -33,11 +33,11 @@ module ActiveCampaign
         end
 
         def list_delete(id:)
-          get(:admin, params: { api_action: 'list_delete', id: id })
+          get(:admin, query: { api_action: 'list_delete', id: id })
         end
 
         def list_delete_list(ids:)
-          get(:admin, params: { api_action: 'list_delete_list', ids: ids.join(',') })
+          get(:admin, query: { api_action: 'list_delete_list', ids: ids.join(',') })
         end
 
         # The list of required params online is not correct. It does not show that sender info is
@@ -62,10 +62,10 @@ module ActiveCampaign
 
           post(
             :admin,
-            params: {
+            query: {
               api_action: 'list_edit'
             },
-            form: args.merge(
+            body: args.merge(
               id: id,
               name: name,
               sender_addr1: sender_addr1,
@@ -95,10 +95,10 @@ module ActiveCampaign
 
           post(
             :admin,
-            params: {
+            query: {
               api_action: 'list_field_add'
             },
-            form: args.merge(
+            body: args.merge(
               title: title,
               type: type,
               req: req,
@@ -109,7 +109,7 @@ module ActiveCampaign
         end
 
         def list_field_delete(id:)
-          get(:admin, params: { api_action: 'list_field_delete', id: id })
+          get(:admin, query: { api_action: 'list_field_delete', id: id })
         end
 
         def list_field_edit(
@@ -124,10 +124,10 @@ module ActiveCampaign
 
           post(
             :admin,
-            params: {
+            query: {
               api_action: 'list_field_edit'
             },
-            form: args.merge(
+            body: args.merge(
               id: id,
               title: title,
               type: type,
@@ -140,11 +140,11 @@ module ActiveCampaign
 
         def list_field_view(ids: 'all')
           #Doesn't seem to work
-          get(:admin, params: { api_action: 'list_field_view', ids: Array(ids).join(',') })
+          get(:admin, query: { api_action: 'list_field_view', ids: Array(ids).join(',') })
         end
 
         def list_list(ids: 'all')
-          get(:admin, params: { api_action: 'list_list', ids: Array(ids).join(',') })
+          get(:admin, query: { api_action: 'list_list', ids: Array(ids).join(',') })
         end
 
         def list_paginator(
@@ -157,7 +157,7 @@ module ActiveCampaign
         )
           get(
             :admin,
-            params: {
+            query: {
               api_action: 'list_paginator',
               sort: sort,
               offset: offset,
@@ -169,7 +169,7 @@ module ActiveCampaign
         end
 
         def list_view(id:)
-          get(:admin, params: { api_action: 'list_view', id: id })
+          get(:admin, query: { api_action: 'list_view', id: id })
         end
       end
     end

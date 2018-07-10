@@ -1,4 +1,4 @@
-require 'http'
+require 'httparty'
 require 'active_campaign/v2/clients/contact'
 require 'active_campaign/v2/clients/form'
 require 'active_campaign/v2/clients/list'
@@ -29,7 +29,9 @@ module ActiveCampaign
       end
 
       def post(endpoint, args={})
-        request(:post, adapter: adapter(endpoint), args: args)
+        headers = args.fetch(:headers, {})
+        headers.merge! post_header
+        request(:post, adapter: adapter(endpoint), args: args.merge(headers: headers))
       end
 
       def put(endpoint, args={})
@@ -46,11 +48,12 @@ module ActiveCampaign
 
       def request(action, adapter:, args: {})
         uri = URI(adapter.endpoint)
-        params_with_defaults = adapter.default_params.merge(args.fetch(:params, {}))
+        query_params = adapter.default_params.merge(args.fetch(:query, {}))
+        encoded_body = URI.encode_www_form(args.fetch(:body, {}))
 
-        response = HTTP.request(action, uri, args.merge(params: params_with_defaults))
+        response = HTTParty.send(action, uri, args.merge(query: query_params, body: encoded_body))
 
-        if params_with_defaults[:api_output] == :json
+        if query_params[:api_output] == :json
           parse_response(response)
         else
           response.body.to_s
@@ -67,6 +70,10 @@ module ActiveCampaign
           tracking_account_id: tracking_account_id,
           event_key: event_key
         )
+      end
+
+      def post_header
+        { 'Content-Type' => 'application/x-www-form-urlencoded' }
       end
 
       def parse_response(response)

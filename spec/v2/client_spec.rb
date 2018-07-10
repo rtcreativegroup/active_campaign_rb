@@ -64,7 +64,7 @@ RSpec.describe ActiveCampaign::V2::Client do
           }
         )
 
-        expect(client.public_send(method, :test, params: { test_key: 'test_value' }))
+        expect(client.public_send(method, :test, query: { test_key: 'test_value' }))
           .to eq('response' => 'test_response')
       end
 
@@ -78,31 +78,12 @@ RSpec.describe ActiveCampaign::V2::Client do
                 api_output: 'json',
               },
               headers: {
-                'Content-Type': 'application/json'
+                'test-header': 'test-value'
               },
             }
           )
 
-          client.public_send(method, :test, headers: { 'Content-Type': 'application/json' })
-        end
-      end
-
-      context 'with form args' do
-        it 'sets the Content-Type to application/x-www-form-urlencoded' do
-          shared_stub_request(
-            method: method,
-            request: {
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              query: {
-                api_key: 'abc123',
-                api_output: 'json',
-              },
-            }
-          )
-
-          client.public_send(method, :test, form: { test_key: 'test_value' })
+          client.public_send(method, :test, headers: { 'test-header': 'test-value' })
         end
       end
 
@@ -190,16 +171,6 @@ RSpec.describe ActiveCampaign::V2::Client do
           client.public_send(method, :test)
         end
       end
-
-      def shared_stub_request(
-        method:,
-        request: { body: '' },
-        response: { body: {}.to_json }
-      )
-        stub_request(method, "#{base_url}/test")
-          .with(request)
-          .to_return(response)
-      end
     end
 
     describe '#get' do
@@ -208,6 +179,27 @@ RSpec.describe ActiveCampaign::V2::Client do
 
     describe '#post' do
       it_behaves_like 'request method', :post
+
+      context 'with form args' do
+        it 'sets the Content-Type to application/x-www-form-urlencoded' do
+          shared_stub_request(
+            method: :post,
+            request: {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              query: {
+                api_key: 'abc123',
+                api_output: 'json',
+              },
+              body: { key1: 'value2', key2: 2 }
+            }
+          )
+
+          client.public_send(:post, :test, body: { key1: 'value2', key2: 2 })
+        end
+      end
+
     end
 
     describe '#put' do
@@ -216,6 +208,16 @@ RSpec.describe ActiveCampaign::V2::Client do
 
     describe '#delete' do
       it_behaves_like 'request method', :delete
+    end
+
+    def shared_stub_request(
+      method:,
+      request: { body: '' },
+      response: { body: {}.to_json }
+    )
+      stub_request(method, "#{base_url}/test")
+        .with(request)
+        .to_return(response)
     end
   end
 end
