@@ -3,9 +3,8 @@ module ActiveCampaign
     module Clients
       module Tracking
         def track_event_add(event:, **args)
-          conn = Connection.new(adapter: ActiveCampaign::V2::TrackingAdapter)
-          conn.post(
-            '',
+          post(
+            :event_adding,
             params: { api_action: 'track_event_add' },
             form: args.merge(event: event)
           )

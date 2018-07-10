@@ -17,7 +17,7 @@ module ActiveCampaign
 
       def_delegators :connection, :get, :post, :put, :delete
 
-      def initialize(connection: Connection.new(adapter: ActiveCampaign::V2::Adapter))
+      def initialize(connection: Connection.new(api_version: :v2))
         @connection = connection
       end
     end
