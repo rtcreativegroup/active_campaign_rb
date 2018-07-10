@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module ActiveCampaign
-  module Test
+  module V2
     module Adapters
       class TestAdapter
         def initialize(base_url:, key:, **)
@@ -29,10 +29,9 @@ module ActiveCampaign
 end
 
 
-RSpec.describe ActiveCampaign::Connection do
-  subject(:connection) do
+RSpec.describe ActiveCampaign::V2::Client do
+  subject(:client) do
     described_class.new(
-      api_version: :test,
       base_url: base_url,
       key: key,
       tracking_account_id: tracking_account_id,
@@ -43,7 +42,7 @@ RSpec.describe ActiveCampaign::Connection do
   let(:key) { 'abc123' }
   let(:tracking_account_id) { '12345' }
   let(:event_key) { 'My-Event-Key' }
-  let(:adapter) { ActiveCampaign::Test::Adapters::TestAdapter }
+  let(:adapter) { ActiveCampaign::V2::Adapters::TestAdapter }
 
   context 'HTTP verbs' do
     shared_examples_for 'request method' do |method|
@@ -65,7 +64,7 @@ RSpec.describe ActiveCampaign::Connection do
           }
         )
 
-        expect(connection.public_send(method, :test, params: { test_key: 'test_value' }))
+        expect(client.public_send(method, :test, params: { test_key: 'test_value' }))
           .to eq('response' => 'test_response')
       end
 
@@ -84,7 +83,7 @@ RSpec.describe ActiveCampaign::Connection do
             }
           )
 
-          connection.public_send(method, :test, headers: { 'Content-Type': 'application/json' })
+          client.public_send(method, :test, headers: { 'Content-Type': 'application/json' })
         end
       end
 
@@ -103,7 +102,7 @@ RSpec.describe ActiveCampaign::Connection do
             }
           )
 
-          connection.public_send(method, :test, form: { test_key: 'test_value' })
+          client.public_send(method, :test, form: { test_key: 'test_value' })
         end
       end
 
@@ -127,7 +126,7 @@ RSpec.describe ActiveCampaign::Connection do
               }
             )
 
-            expect(connection.public_send(method, :test)).to(
+            expect(client.public_send(method, :test)).to(
               eq('status' => 'error', 'error' => 'message'),
               "status code #{code} did not return proper value"
             )
@@ -156,7 +155,7 @@ RSpec.describe ActiveCampaign::Connection do
                                )
                                .and_call_original
 
-          connection.public_send(method, :test)
+          client.public_send(method, :test)
         end
       end
 
@@ -165,7 +164,7 @@ RSpec.describe ActiveCampaign::Connection do
         ENV['ACTIVE_CAMPAIGN_KEY'] = 'my-environmental-key'
         ENV['ACTIVE_CAMPAIGN_TRACKING_ACCOUNT_ID'] = '67890'
         ENV['ACTIVE_CAMPAIGN_EVENT_KEY'] = 'my-environmental-event-key'
-        subject(:connection) { described_class.new(api_version: :test) }
+        subject(:client) { described_class.new }
         let(:base_url) { 'http://environmental.com' }
 
         it "instantiates the adapter with environmental variables" do
@@ -188,7 +187,7 @@ RSpec.describe ActiveCampaign::Connection do
                                )
                                .and_call_original
 
-          connection.public_send(method, :test)
+          client.public_send(method, :test)
         end
       end
 
