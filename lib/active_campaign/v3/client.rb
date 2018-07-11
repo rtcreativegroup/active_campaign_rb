@@ -1,5 +1,6 @@
 require 'httparty'
 require 'active_campaign/v3/clients/deals/deal_stage'
+require 'active_campaign/v3/clients/deals/deal_task_type'
 require 'active_campaign/v3/clients/deals/pipeline'
 
 module ActiveCampaign
@@ -7,6 +8,7 @@ module ActiveCampaign
     class Client
       include HTTParty
       include ActiveCampaign::V3::Clients::Deals::DealStage
+      include ActiveCampaign::V3::Clients::Deals::DealTaskType
       include ActiveCampaign::V3::Clients::Deals::Pipeline
 
       base_uri "#{ENV['ACTIVE_CAMPAIGN_URL']}/api/3"
