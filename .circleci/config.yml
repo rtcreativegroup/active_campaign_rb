@@ -89,7 +89,7 @@ jobs:
     docker:
       - image: circleci/ruby:2.5
     environment:
-      - CC_TEST_REPORTER_ID: ac84a9a9e9287546ed70ff62afe042cb0f286b6222cd8f29328ce6a7e3d2a87e
+      - CC_TEST_REPORTER_ID: a877f9b044604a7f2f157be28ec0f5ec7f6a54e03bddf68e0c07f5a4b5937584
     steps:
       - attach_workspace:
           at: ~/active_campaign/tmp
