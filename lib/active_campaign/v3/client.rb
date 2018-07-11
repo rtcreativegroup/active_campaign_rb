@@ -1,9 +1,12 @@
 require 'httparty'
+require 'active_campaign/v3/clients/deals/pipeline'
 
 module ActiveCampaign
   module V3
     class Client
       include HTTParty
+      include ActiveCampaign::V3::Clients::Deals::Pipeline
+
       base_uri "#{ENV['ACTIVE_CAMPAIGN_URL']}/api/3"
       headers({ "Api-Token" => ENV['ACTIVE_CAMPAIGN_KEY'] })
       format :plain
