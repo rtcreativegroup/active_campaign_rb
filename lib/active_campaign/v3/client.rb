@@ -15,28 +15,28 @@ module ActiveCampaign
         @key = key
       end
 
-      def get(endpoint, args={})
-        request(:get, endpoint: endpoint, args: args)
+      def get(path, params = {}, param_types = {}, object_name = nil)
+        request(:get, http_verb_payload(path, params, param_types, object_name))
       end
 
-      def post(endpoint, args={})
-        request(:post, endpoint: endpoint, args: args)
+      def post(path, params = {}, param_types = {}, object_name = nil)
+        request(:post, http_verb_payload(path, params, param_types, object_name))
       end
 
-      def put(endpoint, args={})
-        request(:put, endpoint: endpoint, args: args)
+      def put(path, params = {}, param_types = {}, object_name = nil)
+        request(:put, http_verb_payload(path, params, param_types, object_name))
       end
 
-      def delete(endpoint, args={})
-        request(:delete, endpoint: endpoint, args: args)
+      def delete(path, params = {}, param_types = {}, object_name = nil)
+        request(:delete, http_verb_payload(path, params, param_types, object_name))
       end
 
       private
 
       attr_reader :base_url, :key
 
-      def request(action, endpoint:, args: {})
-        response = self.class.send(action, endpoint, args)
+      def request(action, payload)
+        response = self.class.send(action, *payload)
 
         case response.code
         when 403
@@ -54,6 +54,37 @@ module ActiveCampaign
             response.to_s
           end
         end
+      end
+
+      def http_verb_payload(path, params, param_types, object_name)
+        path_params = select_params(params, param_types[:path])
+        query_params = select_params(params, param_types[:query])
+        body_params = select_params(params, param_types[:body])
+
+        params = {}
+        params[:query] = query_params if !query_params.empty?
+        params[:body] = objectify_params(object_name, body_params).to_json if !body_params.empty?
+
+        [
+          inline_path_params(path, path_params),
+          params
+        ]
+      end
+
+      def select_params(params, allowed_params)
+        params.select { |key, _| Array(allowed_params).include?(key) }
+      end
+
+      def inline_path_params(path, params)
+        params.each do |key, value|
+          path.gsub!(":#{key.to_s}", value.to_s)
+        end
+
+        path
+      end
+
+      def objectify_params(object_name, params)
+        object_name ? { object_name => params } : params
       end
     end
   end
