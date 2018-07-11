@@ -2,6 +2,7 @@ require 'forwardable'
 require 'active_campaign/v2/clients/contact'
 require 'active_campaign/v2/clients/form'
 require 'active_campaign/v2/clients/list'
+require 'active_campaign/v2/clients/tracking'
 
 module ActiveCampaign
   module V2
@@ -10,12 +11,13 @@ module ActiveCampaign
       include ActiveCampaign::V2::Clients::Contact
       include ActiveCampaign::V2::Clients::Form
       include ActiveCampaign::V2::Clients::List
+      include ActiveCampaign::V2::Clients::Tracking
 
       attr_reader :connection
 
       def_delegators :connection, :get, :post, :put, :delete
 
-      def initialize(connection: Connection.new)
+      def initialize(connection: Connection.new(api_version: :v2))
         @connection = connection
       end
     end

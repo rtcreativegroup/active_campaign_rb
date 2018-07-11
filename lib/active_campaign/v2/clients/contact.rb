@@ -4,7 +4,7 @@ module ActiveCampaign
       module Contact
         def contact_add(email:, p:, **args)
           post(
-            '/',
+            :admin,
             params: {
               api_action: 'contact_add'
             },
@@ -23,7 +23,7 @@ module ActiveCampaign
           **args
         )
           get(
-            '/',
+            :admin,
             params: args.merge(
               api_action: 'contact_automation_list',
               offset: offset,
@@ -35,16 +35,16 @@ module ActiveCampaign
         end
 
         def contact_delete(id:)
-          get('/', params: { api_action: 'contact_delete', id: id })
+          get(:admin, params: { api_action: 'contact_delete', id: id })
         end
 
         def contact_delete_list(ids:)
-          get('/', params: { api_action: 'contact_delete_list', ids: Array(ids).join(',') })
+          get(:admin, params: { api_action: 'contact_delete_list', ids: Array(ids).join(',') })
         end
 
         def contact_edit(id:, email:, p:, **args)
           post(
-            '/',
+            :admin,
             params: {
               api_action: 'contact_edit'
             },
@@ -57,7 +57,7 @@ module ActiveCampaign
         end
 
         def contact_list(ids: 'all', **args)
-          get('/', params: args.merge(api_action: 'contact_list', ids: Array(ids).join(',')))
+          get(:admin, params: args.merge(api_action: 'contact_list', ids: Array(ids).join(',')))
         end
 
         # There seems to be something wrong with this endpoint. It sometimes returns id: 0 for the
@@ -67,7 +67,7 @@ module ActiveCampaign
         # case
         def contact_note_add(id:, listid:, note:, **args)
           post(
-            '/',
+            :admin,
             params: {
               api_action: 'contact_note_add'
             },
@@ -80,12 +80,12 @@ module ActiveCampaign
         end
 
         def contact_note_delete(noteid:)
-          get('/', params: { api_action: 'contact_note_delete', noteid: noteid })
+          get(:admin, params: { api_action: 'contact_note_delete', noteid: noteid })
         end
 
         def contact_note_edit(noteid:, subscriberid:, listid:, note:)
           post(
-            '/',
+            :admin,
             params: {
               api_action: 'contact_note_edit'
             },
@@ -100,7 +100,7 @@ module ActiveCampaign
 
         def contact_paginator(sort:, offset:, limit:, filter:, public:)
           get(
-            '/',
+            :admin,
             params: {
               api_action: 'contact_paginator',
               sort: sort,
@@ -113,12 +113,12 @@ module ActiveCampaign
         end
 
         def contact_sync(email:, **args)
-          post('/', params: { api_action: 'contact_sync' }, form: args.merge(email: email))
+          post(:admin, params: { api_action: 'contact_sync' }, form: args.merge(email: email))
         end
 
         def contact_tag_add(tags:, **args)
           post(
-            '/',
+            :admin,
             params: { api_action: 'contact_tag_add' },
             form: args.merge('tags[]': Array(tags))
           )
@@ -126,22 +126,22 @@ module ActiveCampaign
 
         def contact_tag_remove(tags:, **args)
           post(
-            '/',
+            :admin,
             params: { api_action: 'contact_tag_remove' },
             form: args.merge('tags[]': Array(tags))
           )
         end
 
         def contact_view(id:)
-          get('/', params: { api_action: 'contact_view', id: id })
+          get(:admin, params: { api_action: 'contact_view', id: id })
         end
 
         def contact_view_email(email:)
-          get('/', params: { api_action: 'contact_view_email', email: email })
+          get(:admin, params: { api_action: 'contact_view_email', email: email })
         end
 
         def contact_view_hash(hash:)
-          get('/', params: { api_action: 'contact_view_hash', hash: hash })
+          get(:admin, params: { api_action: 'contact_view_hash', hash: hash })
         end
       end
     end

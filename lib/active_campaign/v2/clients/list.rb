@@ -15,7 +15,7 @@ module ActiveCampaign
         )
 
           post(
-            '/',
+            :admin,
             params: {
               api_action: 'list_add'
             },
@@ -33,11 +33,11 @@ module ActiveCampaign
         end
 
         def list_delete(id:)
-          get('/', params: { api_action: 'list_delete', id: id })
+          get(:admin, params: { api_action: 'list_delete', id: id })
         end
 
         def list_delete_list(ids:)
-          get('/', params: { api_action: 'list_delete_list', ids: ids.join(',') })
+          get(:admin, params: { api_action: 'list_delete_list', ids: ids.join(',') })
         end
 
         # The list of required params online is not correct. It does not show that sender info is
@@ -61,7 +61,7 @@ module ActiveCampaign
           )
 
           post(
-            '/',
+            :admin,
             params: {
               api_action: 'list_edit'
             },
@@ -94,7 +94,7 @@ module ActiveCampaign
         )
 
           post(
-            '/',
+            :admin,
             params: {
               api_action: 'list_field_add'
             },
@@ -109,7 +109,7 @@ module ActiveCampaign
         end
 
         def list_field_delete(id:)
-          get('/', params: { api_action: 'list_field_delete', id: id })
+          get(:admin, params: { api_action: 'list_field_delete', id: id })
         end
 
         def list_field_edit(
@@ -123,7 +123,7 @@ module ActiveCampaign
         )
 
           post(
-            '/',
+            :admin,
             params: {
               api_action: 'list_field_edit'
             },
@@ -140,11 +140,11 @@ module ActiveCampaign
 
         def list_field_view(ids: 'all')
           #Doesn't seem to work
-          get('/', params: { api_action: 'list_field_view', ids: Array(ids).join(',') })
+          get(:admin, params: { api_action: 'list_field_view', ids: Array(ids).join(',') })
         end
 
         def list_list(ids: 'all')
-          get('/', params: { api_action: 'list_list', ids: Array(ids).join(',') })
+          get(:admin, params: { api_action: 'list_list', ids: Array(ids).join(',') })
         end
 
         def list_paginator(
@@ -156,7 +156,7 @@ module ActiveCampaign
           **args
         )
           get(
-            '/',
+            :admin,
             params: {
               api_action: 'list_paginator',
               sort: sort,
@@ -169,7 +169,7 @@ module ActiveCampaign
         end
 
         def list_view(id:)
-          get('/', params: { api_action: 'list_view', id: id })
+          get(:admin, params: { api_action: 'list_view', id: id })
         end
       end
     end
