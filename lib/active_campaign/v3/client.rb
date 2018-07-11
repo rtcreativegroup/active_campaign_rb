@@ -77,7 +77,7 @@ module ActiveCampaign
       end
 
       def select_params(params, allowed_params)
-        params.select { |key, _| Array(allowed_params).include?(key) }
+        params.select { |key, _| Array(allowed_params).map(&:to_s).include?(key.to_s) }
       end
 
       def inline_path_params(path, params)
