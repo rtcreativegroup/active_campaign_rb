@@ -29,5 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'webmock', '~> 3.4', '>= 3.4.2'
 
-  spec.add_dependency 'http', '~> 3.3'
+  spec.add_dependency 'httparty', '~> 0.16.2'
 end

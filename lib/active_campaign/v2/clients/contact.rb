@@ -5,10 +5,10 @@ module ActiveCampaign
         def contact_add(email:, p:, **args)
           post(
             :admin,
-            params: {
+            query: {
               api_action: 'contact_add'
             },
-            form: args.merge(
+            body: args.merge(
               email: email,
               "p[#{p}]": p,
             )
@@ -24,7 +24,7 @@ module ActiveCampaign
         )
           get(
             :admin,
-            params: args.merge(
+            query: args.merge(
               api_action: 'contact_automation_list',
               offset: offset,
               limit: limit,
@@ -35,20 +35,20 @@ module ActiveCampaign
         end
 
         def contact_delete(id:)
-          get(:admin, params: { api_action: 'contact_delete', id: id })
+          get(:admin, query: { api_action: 'contact_delete', id: id })
         end
 
         def contact_delete_list(ids:)
-          get(:admin, params: { api_action: 'contact_delete_list', ids: Array(ids).join(',') })
+          get(:admin, query: { api_action: 'contact_delete_list', ids: Array(ids).join(',') })
         end
 
         def contact_edit(id:, email:, p:, **args)
           post(
             :admin,
-            params: {
+            query: {
               api_action: 'contact_edit'
             },
-            form: args.merge(
+            body: args.merge(
               id: id,
               email: email,
               "p[#{p}]": p,
@@ -57,7 +57,7 @@ module ActiveCampaign
         end
 
         def contact_list(ids: 'all', **args)
-          get(:admin, params: args.merge(api_action: 'contact_list', ids: Array(ids).join(',')))
+          get(:admin, query: args.merge(api_action: 'contact_list', ids: Array(ids).join(',')))
         end
 
         # There seems to be something wrong with this endpoint. It sometimes returns id: 0 for the
@@ -68,10 +68,10 @@ module ActiveCampaign
         def contact_note_add(id:, listid:, note:, **args)
           post(
             :admin,
-            params: {
+            query: {
               api_action: 'contact_note_add'
             },
-            form: args.merge(
+            body: args.merge(
               id: id,
               listid: listid,
               note: note,
@@ -80,16 +80,16 @@ module ActiveCampaign
         end
 
         def contact_note_delete(noteid:)
-          get(:admin, params: { api_action: 'contact_note_delete', noteid: noteid })
+          get(:admin, query: { api_action: 'contact_note_delete', noteid: noteid })
         end
 
         def contact_note_edit(noteid:, subscriberid:, listid:, note:)
           post(
             :admin,
-            params: {
+            query: {
               api_action: 'contact_note_edit'
             },
-            form: {
+            body: {
               noteid: noteid,
               subscriberid: subscriberid,
               listid: listid,
@@ -101,7 +101,7 @@ module ActiveCampaign
         def contact_paginator(sort:, offset:, limit:, filter:, public:)
           get(
             :admin,
-            params: {
+            query: {
               api_action: 'contact_paginator',
               sort: sort,
               offset: offset,
@@ -113,35 +113,35 @@ module ActiveCampaign
         end
 
         def contact_sync(email:, **args)
-          post(:admin, params: { api_action: 'contact_sync' }, form: args.merge(email: email))
+          post(:admin, query: { api_action: 'contact_sync' }, body: args.merge(email: email))
         end
 
         def contact_tag_add(tags:, **args)
           post(
             :admin,
-            params: { api_action: 'contact_tag_add' },
-            form: args.merge('tags[]': Array(tags))
+            query: { api_action: 'contact_tag_add' },
+            body: args.merge('tags[]': Array(tags))
           )
         end
 
         def contact_tag_remove(tags:, **args)
           post(
             :admin,
-            params: { api_action: 'contact_tag_remove' },
-            form: args.merge('tags[]': Array(tags))
+            query: { api_action: 'contact_tag_remove' },
+            body: args.merge('tags[]': Array(tags))
           )
         end
 
         def contact_view(id:)
-          get(:admin, params: { api_action: 'contact_view', id: id })
+          get(:admin, query: { api_action: 'contact_view', id: id })
         end
 
         def contact_view_email(email:)
-          get(:admin, params: { api_action: 'contact_view_email', email: email })
+          get(:admin, query: { api_action: 'contact_view_email', email: email })
         end
 
         def contact_view_hash(hash:)
-          get(:admin, params: { api_action: 'contact_view_hash', hash: hash })
+          get(:admin, query: { api_action: 'contact_view_hash', hash: hash })
         end
       end
     end
