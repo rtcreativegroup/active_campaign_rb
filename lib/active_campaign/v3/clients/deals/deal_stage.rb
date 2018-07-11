@@ -77,7 +77,7 @@ module ActiveCampaign
               body: :stage
             }
 
-            put('/dealStages/:id/deals', args.merge(id: id), param_types)
+            put('/dealStages/:id/deals', args.merge(id: id), param_types, :deal)
           end
         end
       end
