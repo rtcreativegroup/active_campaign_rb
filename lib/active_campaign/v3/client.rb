@@ -1,4 +1,5 @@
 require 'httparty'
+require 'active_campaign/v3/clients/deals/deal'
 require 'active_campaign/v3/clients/deals/deal_stage'
 require 'active_campaign/v3/clients/deals/deal_task'
 require 'active_campaign/v3/clients/deals/deal_task_type'
@@ -8,6 +9,7 @@ module ActiveCampaign
   module V3
     class Client
       include HTTParty
+      include ActiveCampaign::V3::Clients::Deals::Deal
       include ActiveCampaign::V3::Clients::Deals::DealStage
       include ActiveCampaign::V3::Clients::Deals::DealTask
       include ActiveCampaign::V3::Clients::Deals::DealTaskType
