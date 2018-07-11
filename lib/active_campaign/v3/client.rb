@@ -5,6 +5,7 @@ require 'active_campaign/v3/clients/deals/deal_task'
 require 'active_campaign/v3/clients/deals/deal_task_type'
 require 'active_campaign/v3/clients/deals/pipeline'
 require 'active_campaign/v3/clients/deep_data_integrations/connection'
+require 'active_campaign/v3/clients/deep_data_integrations/e_commerce_customer'
 
 module ActiveCampaign
   module V3
@@ -16,6 +17,7 @@ module ActiveCampaign
       include ActiveCampaign::V3::Clients::Deals::DealTaskType
       include ActiveCampaign::V3::Clients::Deals::Pipeline
       include ActiveCampaign::V3::Clients::DeepDataIntegration::Connection
+      include ActiveCampaign::V3::Clients::DeepDataIntegration::ECommerceCustomer
 
       base_uri "#{ENV['ACTIVE_CAMPAIGN_URL']}/api/3"
       headers({ "Api-Token" => ENV['ACTIVE_CAMPAIGN_KEY'] })
