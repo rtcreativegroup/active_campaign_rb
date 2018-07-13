@@ -10,6 +10,8 @@ require 'active_campaign/v2/adapters/site_tracking_adapter'
 require 'active_campaign/v2/adapters/site_tracking_code_adapter'
 require 'active_campaign/v3/adapter'
 require 'active_campaign/v3/client'
+require 'active_campaign/v3/entities/base'
+require 'active_campaign/v3/entities/deep_data_integrations/e_com_order'
 
 module ActiveCampaign
 end

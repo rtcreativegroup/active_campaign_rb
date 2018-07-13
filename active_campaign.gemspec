@@ -31,4 +31,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'httparty', '~> 0.16.2'
   spec.add_dependency 'dry-configurable', '~> 0.7.0'
+  spec.add_dependency 'hashie', '~> 3.5', '>= 3.5.7'
 end
