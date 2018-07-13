@@ -16,8 +16,8 @@ module ActiveCampaign
       include ActiveCampaign::V3::Clients::Deals::DealTask
       include ActiveCampaign::V3::Clients::Deals::DealTaskType
       include ActiveCampaign::V3::Clients::Deals::Pipeline
-      include ActiveCampaign::V3::Clients::DeepDataIntegration::Connection
-      include ActiveCampaign::V3::Clients::DeepDataIntegration::ECommerceCustomer
+      include ActiveCampaign::V3::Clients::DeepDataIntegrations::Connection
+      include ActiveCampaign::V3::Clients::DeepDataIntegrations::ECommerceCustomer
 
       base_uri "#{ActiveCampaign::Settings.config.base_url}/api/3"
       headers({ "Api-Token" => ActiveCampaign::Settings.config.api_key })

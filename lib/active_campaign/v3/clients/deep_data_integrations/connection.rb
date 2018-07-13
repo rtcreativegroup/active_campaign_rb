@@ -1,7 +1,7 @@
 module ActiveCampaign
   module V3
     module Clients
-      module DeepDataIntegration
+      module DeepDataIntegrations
         module Connection
           def connection_create(service:, externalid:, name:, logoUrl:, linkUrl:)
             param_types = {

@@ -1,7 +1,7 @@
 module ActiveCampaign
   module V3
     module Clients
-      module DeepDataIntegration
+      module DeepDataIntegrations
         module ECommerceCustomer
           def e_commerce_customer_create(connectionid:, externalid:, email:)
             param_types = {
