@@ -24,7 +24,167 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Setting API URL and KEY
+
+Set your API base url and key in one of the following ways:
+
+1. Environment Variables
+    ```Shell
+    ENV['ACTIVE_CAMPAIGN_URL'] = 'https://ACCOUNT_NAME.api-us1.com'
+    ENV['ACTIVE_CAMPAIGN_KEY'] = 'YOUR-API-KEY-GOES-HERE'
+    ```
+2. Rails Initializer
+    ```Ruby
+    ActiveCampaign::Settings.configure do |config|
+      config.base_url = 'https://ACCOUNT_NAME.api-us1.com'
+      config.api_key = 'YOUR-API-KEY-GOES-HERE'
+    end
+    ```
+
+Your API URL & Key can be found under **Settings > Developer** in the ActiveCampaign admin panel.
+
+### Setting API Url and Key
+
+### Making API Requests
+
+1. Instantiate a client
+    - v2
+        ```Ruby
+        c = ActiveCampaign::V2::Client.new
+        ```
+    - v3
+        ```Ruby
+        c = ActiveCampaign::V3::Client.new
+        ```
+    NOTE: You can also pass your `base_url` & `api_key` to `Client.new`, i.e.
+    ```Ruby
+    ActiveCampaign::V3::Client.new(
+      base_url: 'https://ACCOUNT_NAME.api-us1.com',
+      api_key: 'YOUR-API-KEY-GOES-HERE'
+    )
+    ```
+2. Call methods on the client, passing a hash of params. Required params for the API are required for this gem
+    ```Ruby
+    response = c.deal_create(
+      title: 'New Deal',
+      contact: '1',
+      value: 30000,
+      currency: 'usd',
+      group: '1',
+      stage: '1',
+      owner: '1',
+      percent: 25,
+      status: 0
+    )
+    ```
+3. Returns JSON
+    ```Json
+    {
+      "contacts": [
+        {
+         "cdate": "2018-07-09T10:46:02-05:00",
+         "email": "test@test.com",
+         "phone": "",
+         "firstName": "",
+         "lastName": "",
+         "orgid": "0",
+         "segmentio_id": "",
+         "bounced_hard": "0",
+         "bounced_soft": "0",
+         "bounced_date": null,
+         "ip": "0",
+         "ua": null,
+         "hash": "55555555555555555555555555555555",
+         "socialdata_lastcheck": null,
+         "email_local": "",
+         "email_domain": "",
+         "sentcnt": "0",
+         "rating_tstamp": null,
+         "gravatar": "0",
+         "deleted": "0",
+         "anonymized": "0",
+         "adate": null,
+         "udate": null,
+         "edate": null,
+         "deleted_at": null,
+         "links": {
+          "bounceLogs": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/bounceLogs",
+          "contactAutomations": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/contactAutomations",
+          "contactData": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/contactData",
+          "contactGoals": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/contactGoals",
+          "contactLists": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/contactLists",
+          "contactLogs": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/contactLogs",
+          "contactTags": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/contactTags",
+          "contactDeals": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/contactDeals",
+          "deals": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/deals",
+          "fieldValues": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/fieldValues",
+          "geoIps": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/geoIps",
+          "notes": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/notes",
+          "organization": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/organization",
+          "plusAppend": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/plusAppend",
+          "trackingLogs": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/trackingLogs",
+          "scoreValues": "https://ACCOUNT_NAME.api-us1.com/api/3/contacts/14/scoreValues"
+        },
+        "id": "1",
+        "organization": null
+      }
+    ],
+      "dealStages": [
+       {
+         "group": "1",
+         "title": "To Contact",
+         "color": "18D499",
+         "order": "1",
+         "width": "280",
+         "dealOrder": "next-action DESC",
+         "cardRegion1": "title",
+         "cardRegion2": "next-action",
+         "cardRegion3": "show-avatar",
+         "cardRegion4": "contact-fullname-orgname",
+         "cardRegion5": "value",
+         "cdate": null,
+         "udate": null,
+         "links": {
+           "group": "https://ACCOUNT_NAME.api-us1.com/api/3/dealStages/1/group"
+         },
+         "id": "1"
+       }
+     ],
+      "deal": {
+        "percent": 25,
+        "status": 0,
+        "title": "New Deal",
+        "value": 30000,
+        "currency": "usd",
+        "contact": 1,
+        "group": "1",
+        "stage": "1",
+        "owner": "1",
+        "cdate": "2018-07-13T13:06:30-05:00",
+        "mdate": "2018-07-13T13:06:30-05:00",
+        "description": "",
+        "hash": "55555555",
+        "organization": null,
+        "winProbability": null,
+        "winProbabilityMdate": null,
+        "links": {
+          "activities": "https://ACCOUNT_NAME.api-us1.com/api/3/deals/4/activities",
+          "contact": "https://ACCOUNT_NAME.api-us1.com/api/3/deals/4/contact",
+          "contactDeals": "https://ACCOUNT_NAME.api-us1.com/api/3/deals/4/contactDeals",
+          "group": "https://ACCOUNT_NAME.api-us1.com/api/3/deals/4/group",
+          "nextTask": "https://ACCOUNT_NAME.api-us1.com/api/3/deals/4/nextTask",
+          "notes": "https://ACCOUNT_NAME.api-us1.com/api/3/deals/4/notes",
+          "organization": "https://ACCOUNT_NAME.api-us1.com/api/3/deals/4/organization",
+          "owner": "https://ACCOUNT_NAME.api-us1.com/api/3/deals/4/owner",
+          "scoreValues": "https://ACCOUNT_NAME.api-us1.com/api/3/deals/4/scoreValues",
+          "stage": "https://ACCOUNT_NAME.api-us1.com/api/3/deals/4/stage",
+          "tasks": "https://ACCOUNT_NAME.api-us1.com/api/3/deals/4/tasks"
+        },
+        "id": "1",
+        "isDisabled": false
+      }
+    }
+    ```
 
 ## Development
 
