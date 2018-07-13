@@ -19,15 +19,14 @@ module ActiveCampaign
       include ActiveCampaign::V3::Clients::DeepDataIntegration::Connection
       include ActiveCampaign::V3::Clients::DeepDataIntegration::ECommerceCustomer
 
-      base_uri "#{ENV['ACTIVE_CAMPAIGN_URL']}/api/3"
-      headers({ "Api-Token" => ENV['ACTIVE_CAMPAIGN_KEY'] })
+      base_uri "#{ActiveCampaign::Settings.config.base_url}/api/3"
+      headers({ "Api-Token" => ActiveCampaign::Settings.config.api_key })
       format :plain
 
-      def initialize(base_url: ENV['ACTIVE_CAMPAIGN_URL'], key: ENV['ACTIVE_CAMPAIGN_KEY'], **)
-        self.class.base_uri "#{base_url}/api/3"
-        self.class.headers({ "Api-Token" => key })
-        self.class.format :plain
-        @key = key
+      def initialize(base_url: nil, key: nil, format: nil)
+        self.class.base_uri "#{base_url}/api/3" if base_url
+        self.class.headers({ "Api-Token" => key }) if key
+        self.class.format format if format
       end
 
       def get(path, params = {}, param_types = {}, object_name = nil)
@@ -47,8 +46,6 @@ module ActiveCampaign
       end
 
       private
-
-      attr_reader :base_url, :key
 
       def request(action, payload)
         response = self.class.send(action, *payload)
