@@ -21,14 +21,14 @@ module ActiveCampaign
       include ActiveCampaign::V3::Clients::DeepDataIntegrations::ECommerceCustomer
       include ActiveCampaign::V3::Clients::DeepDataIntegrations::ECommerceOrder
 
-      base_uri "#{ActiveCampaign::Settings.config.base_url}/api/3"
-      headers({ "Api-Token" => ActiveCampaign::Settings.config.api_key })
-      format :plain
-
-      def initialize(base_url: nil, key: nil, format: nil)
-        self.class.base_uri "#{base_url}/api/3" if base_url
-        self.class.headers({ "Api-Token" => key }) if key
-        self.class.format format if format
+      def initialize(
+        base_url: ActiveCampaign::Settings.config.base_url,
+        key: ActiveCampaign::Settings.config.api_key,
+        format: :plain
+      )
+        self.class.base_uri "#{base_url}/api/3"
+        self.class.headers({ "Api-Token" => key })
+        self.class.format format
       end
 
       def get(path, params = {}, param_types = {}, object_name = nil)
