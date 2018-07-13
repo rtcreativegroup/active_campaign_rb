@@ -11,15 +11,16 @@ module ActiveCampaign
             property :category
           end
 
-          property :externalid, coerce: String, required: true
+          property :id, coerce: Integer
+          property :externalid, coerce: String, required: -> { id.nil? }
           property :source,
                    transform_with: ->(value) { [0,1].include?(value.to_i) ? value.to_i : nil }
           property :email, required: true
           property :orderProducts, coerce: Array[OrderProduct]
           property :totalPrice, coerce: String, required: true
           property :currency, required: true
-          property :connectionid, coerce: Integer, required: true
-          property :customerid, coerce: Integer, required: true
+          property :connectionid, coerce: Integer, required: -> { id.nil? }
+          property :customerid, coerce: Integer, required: -> { id.nil? }
           property :orderNumber, coerce: String
           property :orderUrl
           property :orderDate,
