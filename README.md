@@ -24,11 +24,9 @@ Or install it yourself as:
 
 ## FYI
 
-We've done our best to match this gem's API to ActiveCampaign's API & API docs. However, the
-ActiveCampaign APIs and/or API docs seem to have some bugs and gotchas to watch out for.
-A list of those found so far can be found in [docs/API_BUGS_AND_GOTCHAS.md](docs/API_BUGS_AND_GOTCHAS.md).
-If there's a question about why something in this gem's API doesn't match ActiveCampaign's API docs,
-you should look there first.
+We've done our best to match this gem's API to ActiveCampaign's API & API docs. However, the ActiveCampaign APIs and/or API docs seem to have some bugs and gotchas to watch out for. A list of those found so far can be found in [docs/API_BUGS_AND_GOTCHAS.md](docs/API_BUGS_AND_GOTCHAS.md).
+
+If there's a question about why something in this gem's API doesn't match ActiveCampaign's API docs, you should look there first.
 
 ## Usage
 
