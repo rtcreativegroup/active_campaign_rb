@@ -1,4 +1,7 @@
 require 'active_campaign/version'
+
+require 'active_campaign/settings'
+
 require 'active_campaign/v2/client'
 require 'active_campaign/v2/adapters/admin_adapter'
 require 'active_campaign/v2/adapters/event_adding_adapter'
@@ -6,6 +9,9 @@ require 'active_campaign/v2/adapters/event_management_adapter'
 require 'active_campaign/v2/adapters/site_tracking_adapter'
 require 'active_campaign/v2/adapters/site_tracking_code_adapter'
 require 'active_campaign/v3/adapter'
+require 'active_campaign/v3/client'
+require 'active_campaign/v3/entities/base'
+require 'active_campaign/v3/entities/deep_data_integrations/e_com_order'
 
 module ActiveCampaign
 end
