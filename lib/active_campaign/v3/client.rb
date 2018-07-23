@@ -54,16 +54,18 @@ module ActiveCampaign
 
         case response.code
         when 403
-          {
-            'error' => 'The request could not be authenticated or the authenticated user is not authorized to access the requested resource.'
-          }
+          raise ActiveCampaign::Error, 'The request could not be authenticated or the authenticated user is not authorized to access the requested resource.'
         when 404
-          {
-            'error' => 'The requested resource does not exist.'
-          }
+          raise ActiveCampaign::Error, 'The requested resource does not exist.'
         else
           if response.content_type == 'application/json'
-            JSON.parse(response)
+            response_json = JSON.parse(response)
+
+            if response_json['errors']
+              raise ActiveCampaign::Error, response_json['errors']
+            else
+              response_json
+            end
           else
             response.to_s
           end

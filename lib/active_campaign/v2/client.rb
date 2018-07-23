@@ -66,7 +66,13 @@ module ActiveCampaign
         response = self.class.send(action, *payload)
 
         if response.content_type == 'application/json'
-          JSON.parse(response)
+          response_json = JSON.parse(response)
+
+          if response_json['result_code'] == 0
+            raise ActiveCampaign::Error, response_json['result_message']
+          else
+            response_json
+          end
         else
           response.to_s
         end
