@@ -7,77 +7,97 @@ require 'active_campaign/v2/clients/tracking'
 module ActiveCampaign
   module V2
     class Client
+      include HTTParty
       include ActiveCampaign::V2::Clients::Contact
       include ActiveCampaign::V2::Clients::Form
       include ActiveCampaign::V2::Clients::List
       include ActiveCampaign::V2::Clients::Tracking
 
+      DEFAULT_PARAMS = {
+        admin: -> () do
+          {
+            api_key: ActiveCampaign::Settings.config.api_key,
+            api_output: :json,
+          }
+        end,
+        add_tracking_event: -> () do
+          {
+            api_key: ActiveCampaign::Settings.config.api_key,
+            actid: ActiveCampaign::Settings.config.tracking_account_id,
+            key: ActiveCampaign::Settings.config.event_key,
+          }
+        end,
+        default: -> () do
+          {
+            api_key: ActiveCampaign::Settings.config.api_key,
+          }
+        end,
+      }
+
       def initialize(
-        base_url: ENV['ACTIVE_CAMPAIGN_URL'],
-        key: ENV['ACTIVE_CAMPAIGN_KEY'],
-        tracking_account_id: ENV['ACTIVE_CAMPAIGN_TRACKING_ACCOUNT_ID'],
-        event_key: ENV['ACTIVE_CAMPAIGN_EVENT_KEY']
+        base_url: ActiveCampaign::Settings.config.base_url,
+        format: :plain
       )
-        @base_url = base_url
-        @key = key
-        @tracking_account_id = tracking_account_id
-        @event_key = event_key
+        self.class.base_uri base_url
+        self.class.format format
       end
 
-      def get(endpoint, args={})
-        request(:get, adapter: adapter(endpoint), args: args)
+      def get(endpoint, params={})
+        request(:get, http_verb_payload(endpoint, params))
       end
 
-      def post(endpoint, args={})
-        headers = args.fetch(:headers, {})
+      def post(endpoint, params={})
+        headers = params.fetch(:headers, {})
         headers.merge! post_header
-        request(:post, adapter: adapter(endpoint), args: args.merge(headers: headers))
+        request(:post, http_verb_payload(endpoint, params.merge(headers: headers)))
       end
 
-      def put(endpoint, args={})
-        request(:put, adapter: adapter(endpoint), args: args)
+      def put(endpoint, params={})
+        request(:put, http_verb_payload(endpoint, params))
       end
 
-      def delete(endpoint, args={})
-        request(:delete, adapter: adapter(endpoint), args: args)
+      def delete(endpoint, params={})
+        request(:delete, http_verb_payload(endpoint, params))
       end
 
       private
 
-      attr_reader :base_url, :key, :tracking_account_id, :event_key
+      def request(action, payload)
+        response = self.class.send(action, *payload)
 
-      def request(action, adapter:, args: {})
-        uri = URI(adapter.endpoint)
-        query_params = adapter.default_params.merge(args.fetch(:query, {}))
-        encoded_body = URI.encode_www_form(args.fetch(:body, {}))
-
-        response = HTTParty.send(action, uri, args.merge(query: query_params, body: encoded_body))
-
-        if query_params[:api_output] == :json
-          parse_response(response)
+        if response.content_type == 'application/json'
+          JSON.parse(response)
         else
-          response.body.to_s
+          response.to_s
         end
       end
 
-      def adapter(endpoint)
-        name = "#{endpoint.to_s.split('_').collect!{ |w| w.capitalize }.join}"
-        namespaced_klass_name = "ActiveCampaign::V2::Adapters::#{name}Adapter"
+      def http_verb_payload(path, params)
+        full_path = params.fetch(:base_uri, self.class.base_uri) + path
+        query_params = default_params(full_path).merge(params.fetch(:query, {}))
+        encoded_body = URI.encode_www_form(params.fetch(:body, {}))
 
-        Object.const_get(namespaced_klass_name).new(
-          base_url: base_url,
-          key: key,
-          tracking_account_id: tracking_account_id,
-          event_key: event_key
-        )
+        [
+          path,
+          params.merge(query: query_params, body: encoded_body)
+        ]
+      end
+
+      def default_params(url)
+        key = case url
+        when "#{ActiveCampaign::Settings.config.base_url}/admin/api.php"
+          :admin
+        when 'https://trackcmp.net/event'
+          :add_tracking_event
+        else
+          :default
+        end
+
+        DEFAULT_PARAMS[key].()
       end
 
       def post_header
         { 'Content-Type' => 'application/x-www-form-urlencoded' }
-      end
-
-      def parse_response(response)
-        JSON.parse(response.body)
       end
     end
   end

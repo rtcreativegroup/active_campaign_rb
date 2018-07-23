@@ -3,11 +3,11 @@ module ActiveCampaign
     module Clients
       module Form
         def form_getforms
-          get(:admin, query: { api_action: 'form_getforms' })
+          get('/admin/api.php', query: { api_action: 'form_getforms' })
         end
 
         def form_html(id:)
-          get(:admin, query: { api_action: 'form_html', api_output: :html, id: id })
+          get('/admin/api.php', query: { api_action: 'form_html', api_output: :html, id: id })
         end
       end
     end
