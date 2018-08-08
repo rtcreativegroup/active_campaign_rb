@@ -1,4 +1,5 @@
 require 'httparty'
+require 'active_campaign/parse_json'
 require 'active_campaign/v3/clients/deals/deal'
 require 'active_campaign/v3/clients/deals/deal_stage'
 require 'active_campaign/v3/clients/deals/deal_task'
@@ -12,6 +13,7 @@ module ActiveCampaign
   module V3
     class Client
       include HTTParty
+      include ActiveCampaign::ParseJson
       include ActiveCampaign::V3::Clients::Deals::Deal
       include ActiveCampaign::V3::Clients::Deals::DealStage
       include ActiveCampaign::V3::Clients::Deals::DealTask
@@ -53,17 +55,25 @@ module ActiveCampaign
         response = self.class.send(action, *payload)
 
         case response.code
+        when 401
+          raise ActiveCampaign::UnauthorizedError, response
         when 403
-          {
-            'error' => 'The request could not be authenticated or the authenticated user is not authorized to access the requested resource.'
-          }
+          raise ActiveCampaign::ForbiddenError, response
         when 404
-          {
-            'error' => 'The requested resource does not exist.'
-          }
+          raise ActiveCampaign::NotFoundError, response
+        when 500
+          raise ActiveCampaign::InternalServerError, response
+        when 503
+          raise ActiveCampaign::ServiceUnavailableError, response
         else
           if response.content_type == 'application/json'
-            JSON.parse(response)
+            response_json = parse_json(response)
+
+            if response_json['errors']
+              raise ActiveCampaign::Error, response_json['errors']
+            else
+              response_json
+            end
           else
             response.to_s
           end

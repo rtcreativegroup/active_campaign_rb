@@ -1,4 +1,5 @@
 require 'httparty'
+require 'active_campaign/parse_json'
 require 'active_campaign/v2/clients/contact'
 require 'active_campaign/v2/clients/form'
 require 'active_campaign/v2/clients/list'
@@ -8,6 +9,7 @@ module ActiveCampaign
   module V2
     class Client
       include HTTParty
+      include ActiveCampaign::ParseJson
       include ActiveCampaign::V2::Clients::Contact
       include ActiveCampaign::V2::Clients::Form
       include ActiveCampaign::V2::Clients::List
@@ -66,7 +68,13 @@ module ActiveCampaign
         response = self.class.send(action, *payload)
 
         if response.content_type == 'application/json'
-          JSON.parse(response)
+          response_json = parse_json(response)
+
+          if response_json['result_code'] == 0
+            raise ActiveCampaign::Error, response_json['result_message']
+          else
+            response_json
+          end
         else
           response.to_s
         end
