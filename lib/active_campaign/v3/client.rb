@@ -1,4 +1,5 @@
 require 'httparty'
+require 'active_campaign/parse_json'
 require 'active_campaign/v3/clients/deals/deal'
 require 'active_campaign/v3/clients/deals/deal_stage'
 require 'active_campaign/v3/clients/deals/deal_task'
@@ -12,6 +13,7 @@ module ActiveCampaign
   module V3
     class Client
       include HTTParty
+      include ActiveCampaign::ParseJson
       include ActiveCampaign::V3::Clients::Deals::Deal
       include ActiveCampaign::V3::Clients::Deals::DealStage
       include ActiveCampaign::V3::Clients::Deals::DealTask
@@ -65,7 +67,7 @@ module ActiveCampaign
           raise ActiveCampaign::ServiceUnavailableError, response
         else
           if response.content_type == 'application/json'
-            response_json = JSON.parse(response)
+            response_json = parse_json(response)
 
             if response_json['errors']
               raise ActiveCampaign::Error, response_json['errors']
