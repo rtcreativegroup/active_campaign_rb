@@ -53,10 +53,16 @@ module ActiveCampaign
         response = self.class.send(action, *payload)
 
         case response.code
+        when 401
+          raise ActiveCampaign::UnauthorizedError, response
         when 403
-          raise ActiveCampaign::Error, 'The request could not be authenticated or the authenticated user is not authorized to access the requested resource.'
+          raise ActiveCampaign::ForbiddenError, response
         when 404
-          raise ActiveCampaign::Error, 'The requested resource does not exist.'
+          raise ActiveCampaign::NotFoundError, response
+        when 500
+          raise ActiveCampaign::InternalServerError, response
+        when 503
+          raise ActiveCampaign::ServiceUnavailableError, response
         else
           if response.content_type == 'application/json'
             response_json = JSON.parse(response)

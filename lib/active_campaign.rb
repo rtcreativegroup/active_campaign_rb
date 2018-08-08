@@ -9,4 +9,9 @@ require 'active_campaign/v3/entities/deep_data_integrations/e_com_order'
 
 module ActiveCampaign
   class Error < StandardError; end
+  class UnauthorizedError < ActiveCampaign::Error; end
+  class ForbiddenError < ActiveCampaign::Error; end
+  class NotFoundError < ActiveCampaign::Error; end
+  class InternalServerError < ActiveCampaign::Error; end
+  class ServiceUnavailableError < ActiveCampaign::Error; end
 end
