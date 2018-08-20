@@ -22,13 +22,6 @@ module ActiveCampaign
             api_output: :json,
           }
         end,
-        add_tracking_event: -> () do
-          {
-            api_key: ActiveCampaign::Settings.config.api_key,
-            actid: ActiveCampaign::Settings.config.tracking_account_id,
-            key: ActiveCampaign::Settings.config.event_key,
-          }
-        end,
         default: -> () do
           {
             api_key: ActiveCampaign::Settings.config.api_key,
@@ -95,8 +88,6 @@ module ActiveCampaign
         key = case url
         when "#{ActiveCampaign::Settings.config.base_url}/admin/api.php"
           :admin
-        when 'https://trackcmp.net/event'
-          :add_tracking_event
         else
           :default
         end

@@ -35,11 +35,19 @@ module ActiveCampaign
         end
 
         def track_event_add(event:, **args)
+          visit_data = args.delete(:visit)
+          body_args = args.merge(
+            actid: ActiveCampaign::Settings.config.tracking_account_id,
+            key: ActiveCampaign::Settings.config.event_key,
+            event: event,
+          )
+
+          body_args.merge!(visit: visit_data.to_json) if visit_data
+
           post(
             '',
             base_uri: 'https://trackcmp.net/event',
-            query: { api_action: 'track_event_add' },
-            body: args.merge(event: event)
+            body: body_args,
           )
         end
       end
