@@ -34,15 +34,15 @@ module ActiveCampaign
           delete('/api/2/track/site', body: { domain: domain })
         end
 
-        def track_event_add(event:, **args)
-          visit_data = args.delete(:visit)
+        def track_event_add(event:, eventdata:, email:, **args)
+          visit_data = args.delete(:visit) || {}
           body_args = args.merge(
             actid: ActiveCampaign::Settings.config.tracking_account_id,
             key: ActiveCampaign::Settings.config.event_key,
             event: event,
+            eventdata: eventdata,
+            visit: visit_data.merge(email: email).to_json
           )
-
-          body_args.merge!(visit: visit_data.to_json) if visit_data
 
           post(
             '',
