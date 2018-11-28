@@ -14,4 +14,5 @@ module ActiveCampaign
   class NotFoundError < ActiveCampaign::Error; end
   class InternalServerError < ActiveCampaign::Error; end
   class ServiceUnavailableError < ActiveCampaign::Error; end
+  class UnprocessableEntityError < ActiveCampaign::Error; end
 end
