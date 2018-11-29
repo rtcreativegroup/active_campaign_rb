@@ -31,8 +31,10 @@ module ActiveCampaign
 
       def initialize(
         base_url: ActiveCampaign::Settings.config.base_url,
-        format: :plain
+        format: :plain,
+        timeout: ActiveCampaign::Settings.config.timeout
       )
+        self.class.default_timeout timeout
         self.class.base_uri base_url
         self.class.format format
       end
