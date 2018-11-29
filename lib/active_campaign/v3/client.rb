@@ -61,6 +61,8 @@ module ActiveCampaign
           raise ActiveCampaign::ForbiddenError, response
         when 404
           raise ActiveCampaign::NotFoundError, response
+        when 422
+          raise ActiveCampaign::UnprocessableEntityError, response
         when 500
           raise ActiveCampaign::InternalServerError, response
         when 503
