@@ -26,8 +26,10 @@ module ActiveCampaign
       def initialize(
         base_url: ActiveCampaign::Settings.config.base_url,
         key: ActiveCampaign::Settings.config.api_key,
-        format: :plain
+        format: :plain,
+        timeout: ActiveCampaign::Settings.config.timeout
       )
+        self.class.default_timeout timeout
         self.class.base_uri "#{base_url}/api/3"
         self.class.headers({ "Api-Token" => key })
         self.class.format format
