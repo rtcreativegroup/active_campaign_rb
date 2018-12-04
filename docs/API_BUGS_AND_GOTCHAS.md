@@ -37,4 +37,4 @@
 
 ### Deep Data Integrations
 #### E-Commerce Customers
-- _Create a customer_ - appears to create two customers each time. One with the correct `connectionid` & `externalid` and one where both of those values are set to 0.
+- _Create a customer_ - appears to create two customers each time. One with the correct `connectionid` & `externalid` and one where both of those values are set to 0. The customer with both values set to 0 is an aggregate record and should be ignored.
