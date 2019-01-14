@@ -15,6 +15,8 @@ test_steps: &test_steps
       - active_campaign_rb-ruby-{{ .Environment.CIRCLE_JOB }}-
 
   # Bundle install dependencies
+  - run: gem uninstall bundler
+  - run: gem install bundler -v 2.0.1
   - run: bundle install --path vendor/bundle
 
   # Cache Dependencies
