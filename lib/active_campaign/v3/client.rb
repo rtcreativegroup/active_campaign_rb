@@ -1,5 +1,6 @@
 require 'httparty'
 require 'active_campaign/parse_json'
+require 'active_campaign/v3/clients/contacts/contact'
 require 'active_campaign/v3/clients/deals/deal'
 require 'active_campaign/v3/clients/deals/deal_stage'
 require 'active_campaign/v3/clients/deals/deal_task'
@@ -14,6 +15,7 @@ module ActiveCampaign
     class Client
       include HTTParty
       include ActiveCampaign::ParseJson
+      include ActiveCampaign::V3::Clients::Contacts::Contact
       include ActiveCampaign::V3::Clients::Deals::Deal
       include ActiveCampaign::V3::Clients::Deals::DealStage
       include ActiveCampaign::V3::Clients::Deals::DealTask
