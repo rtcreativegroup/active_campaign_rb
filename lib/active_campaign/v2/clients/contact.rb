@@ -78,7 +78,7 @@ module ActiveCampaign
         #
         # NOTE: Contacts that are not subscribed to any list will not be returned in the result set.
         def custom_field_search(field:, value:, **args)
-          get('/admin/api.php', query: args.merge(api_action: 'contact_list', "filters[fields][%#{field}%]": value))
+          get('/admin/api.php', query: args.merge(api_action: 'contact_list', "filters[fields][%#{field.to_s.upcase}%]": value))
         end
 
         # There seems to be something wrong with this endpoint. It sometimes returns id: 0 for the
