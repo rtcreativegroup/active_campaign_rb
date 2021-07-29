@@ -60,6 +60,27 @@ module ActiveCampaign
           get('/admin/api.php', query: args.merge(api_action: 'contact_list', ids: Array(ids).join(',')))
         end
 
+        # This can be used to search for contacts based on a custom field setup in ActiveCampaign.
+        # It will return a JSON object as the response with the following key structure:
+        #
+        # {
+        #   '0': DATA FOR FIRST RESULT,
+        #   '1': DATA FOR SECOND RESULT,
+        #   'result_code': 1,
+        #   'result_message': 'Success: Something is returned',
+        #   'result_output': 'json',
+        # }
+        #
+        # NOTE: This is most useful for looking up a contact with a unique identifier stored in a
+        # custom field. Since the results are just stored in the JSON objects with a cardinal index,
+        # it would be tricky to navigate this response with many results. That being said, if you
+        # expect there to be one and only one result with a unique identifier, it should work.
+        #
+        # NOTE: Contacts that are not subscribed to any list will not be returned in the result set.
+        def custom_field_search(field:, value:, **args)
+          get('/admin/api.php', query: args.merge(api_action: 'contact_list', "filters[fields][%#{field}%]": value))
+        end
+
         # There seems to be something wrong with this endpoint. It sometimes returns id: 0 for the
         # note that was added, but when you try to delete note 0, it says that's not possible. I
         # haven't figured out a pattern. At first, I thought it was returning id: 0 for the first
