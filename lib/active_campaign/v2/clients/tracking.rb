@@ -45,8 +45,8 @@ module ActiveCampaign
           )
 
           post(
-            '',
-            base_uri: 'https://trackcmp.net/event',
+            '/event',
+            base_uri: 'https://trackcmp.net',
             body: body_args,
           )
         end
