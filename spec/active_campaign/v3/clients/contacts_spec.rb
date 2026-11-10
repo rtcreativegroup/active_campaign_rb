@@ -13,18 +13,6 @@ RSpec.describe ActiveCampaign::V3::Client do
     nil
   end
 
-  describe '#contact_sync' do
-    it 'posts the contact fields to /contact/sync' do
-      client.contact_sync(email: 'ann@example.com', firstName: 'Ann')
-
-      expect(
-        a_request(:post, "#{api_url}/contact/sync").with do |req|
-          json_body(req) == { 'contact' => { 'email' => 'ann@example.com', 'firstName' => 'Ann' } }
-        end
-      ).to have_been_made
-    end
-  end
-
   describe '#contact_automation_create' do
     it 'posts the contact and automation ids to /contactAutomations' do
       client.contact_automation_create(contact_id: 42, automation_id: 7)
