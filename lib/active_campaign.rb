@@ -15,4 +15,5 @@ module ActiveCampaign
   class InternalServerError < ActiveCampaign::Error; end
   class ServiceUnavailableError < ActiveCampaign::Error; end
   class UnprocessableEntityError < ActiveCampaign::Error; end
+  class InvalidJsonResponseError < ActiveCampaign::Error; end
 end
