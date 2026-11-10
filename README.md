@@ -1,6 +1,6 @@
 # ActiveCampaign
 
-[![CI](https://github.com/rtcreativegroup/active_campaign_rb/actions/workflows/ci.yml/badge.svg)](https://github.com/rtcreativegroup/active_campaign_rb/actions/workflows/ci.yml)
+[![CI](https://github.com/rtcreativegroup/active_campaign_rb/actions/workflows/ci.yml/badge.svg?branch=crashdown)](https://github.com/rtcreativegroup/active_campaign_rb/actions/workflows/ci.yml?query=branch%3Acrashdown)
 [![Maintainability](https://api.codeclimate.com/v1/badges/69ccab5404f357456335/maintainability)](https://codeclimate.com/github/rtcreativegroup/active_campaign_rb/maintainability)
 
 A Ruby wrapper for the ActiveCampaign API
