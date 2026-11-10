@@ -20,15 +20,16 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler', '~> 2.0.1'
+  spec.add_development_dependency 'bundler', '~> 4'
   spec.add_development_dependency "dotenv"
   spec.add_development_dependency 'pry'
-  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4.1'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'webmock', '~> 3.4', '>= 3.4.2'
 
+  spec.add_dependency 'csv', '~> 3.0'
   spec.add_dependency 'httparty', '~> 0.16.2'
   spec.add_dependency 'dry-configurable', '~> 0.12.0'
   spec.add_dependency 'hashie', '> 3.5', '< 6'
