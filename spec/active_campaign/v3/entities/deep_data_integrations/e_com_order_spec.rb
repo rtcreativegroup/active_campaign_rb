@@ -15,10 +15,6 @@ RSpec.describe ActiveCampaign::V3::Entities::DeepDataIntegrations::EComOrder do
   end
 
   it "raises an ArgumentError naming 'customerid' when the customer is unknown" do
-    if Gem::Version.new(Hashie::VERSION) >= Gem::Version.new('5.1')
-      pending 'hashie >= 5.1 reworded the required-property message that crashdown matches on'
-    end
-
     expect { described_class.new(attributes.merge(customerid: nil)) }
       .to raise_error(ArgumentError, a_string_including("The property 'customerid' is required"))
   end
