@@ -23,7 +23,7 @@ RSpec.describe ActiveCampaign::ParseJson do
       stub_v2(html_body)
 
       expect { request }.to raise_error(
-        ActiveCampaign::Error,
+        ActiveCampaign::InvalidJsonResponseError,
         "ActiveCampaign returned invalid JSON (HTTP 200): #{html_body}"
       )
     end
@@ -32,7 +32,7 @@ RSpec.describe ActiveCampaign::ParseJson do
       stub_v2('')
 
       expect { request }.to raise_error(
-        ActiveCampaign::Error,
+        ActiveCampaign::InvalidJsonResponseError,
         'ActiveCampaign returned invalid JSON (HTTP 200): (empty body)'
       )
     end
@@ -41,7 +41,7 @@ RSpec.describe ActiveCampaign::ParseJson do
       stub_v2("<html>\n  #{'x' * 200}</html>")
 
       expect { request }.to raise_error(
-        ActiveCampaign::Error,
+        ActiveCampaign::InvalidJsonResponseError,
         "ActiveCampaign returned invalid JSON (HTTP 200): <html> #{'x' * 110}..."
       )
     end
@@ -71,7 +71,7 @@ RSpec.describe ActiveCampaign::ParseJson do
       stub_v3(html_body)
 
       expect { request }.to raise_error(
-        ActiveCampaign::Error,
+        ActiveCampaign::InvalidJsonResponseError,
         "ActiveCampaign returned invalid JSON (HTTP 200): #{html_body}"
       )
     end
