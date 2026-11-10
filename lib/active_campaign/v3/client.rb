@@ -108,11 +108,9 @@ module ActiveCampaign
       end
 
       def inline_path_params(path, params)
-        params.each do |key, value|
-          path.gsub!(":#{key.to_s}", value.to_s)
+        params.reduce(path) do |inlined, (key, value)|
+          inlined.gsub(":#{key}", value.to_s)
         end
-
-        path
       end
 
       def objectify_params(object_name, params)
